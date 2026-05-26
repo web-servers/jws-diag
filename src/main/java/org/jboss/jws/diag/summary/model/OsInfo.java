@@ -1,7 +1,6 @@
 package org.jboss.jws.diag.summary.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Operating system information collected from {@code /etc/os-release} or system properties.
@@ -19,17 +18,14 @@ public final class OsInfo {
         this.arch = builder.arch;
     }
 
-    @JsonProperty("name")
     public String getName() {
         return name;
     }
 
-    @JsonProperty("version")
     public String getVersion() {
         return version;
     }
 
-    @JsonProperty("arch")
     public String getArch() {
         return arch;
     }

@@ -1,8 +1,10 @@
 package org.jboss.jws.diag.summary.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 
+import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
 
@@ -14,7 +16,12 @@ public final class JvmInfo {
 
     private final String version;
     private final String vendor;
-    private final String javaHome;
+    private final Path javaHome;
+    /**
+     * JVM args as seen in {@code /proc/<pid>/cmdline}. Callers must redact sensitive
+     * {@code -D} flags (e.g. {@code -Djavax.net.ssl.keyStorePassword}) before passing
+     * this list to the builder.
+     */
     private final List<String> jvmArgs;
 
     private JvmInfo(Builder builder) {
@@ -26,22 +33,19 @@ public final class JvmInfo {
                 : null;
     }
 
-    @JsonProperty("version")
     public String getVersion() {
         return version;
     }
 
-    @JsonProperty("vendor")
     public String getVendor() {
         return vendor;
     }
 
-    @JsonProperty("javaHome")
-    public String getJavaHome() {
+    @JsonSerialize(using = ToStringSerializer.class)
+    public Path getJavaHome() {
         return javaHome;
     }
 
-    @JsonProperty("jvmArgs")
     public List<String> getJvmArgs() {
         return jvmArgs;
     }
@@ -53,7 +57,7 @@ public final class JvmInfo {
     public static final class Builder {
         private String version;
         private String vendor;
-        private String javaHome;
+        private Path javaHome;
         private List<String> jvmArgs;
 
         public Builder version(String version) {
@@ -66,7 +70,7 @@ public final class JvmInfo {
             return this;
         }
 
-        public Builder javaHome(String javaHome) {
+        public Builder javaHome(Path javaHome) {
             this.javaHome = javaHome;
             return this;
         }
@@ -84,6 +88,6 @@ public final class JvmInfo {
     @Override
     public String toString() {
         return "JvmInfo{version='" + version + "', vendor='" + vendor
-                + "', javaHome='" + javaHome + "', jvmArgs=" + jvmArgs + '}';
+                + "', javaHome=" + javaHome + ", jvmArgs=" + jvmArgs + '}';
     }
 }

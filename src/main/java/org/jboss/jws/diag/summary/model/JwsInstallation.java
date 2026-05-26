@@ -1,18 +1,20 @@
 package org.jboss.jws.diag.summary.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 
 import java.nio.file.Path;
 
 /**
  * Root model representing a discovered JBoss Web Server / Apache Tomcat installation.
- * All fields are optional; discovery may populate a subset depending on what is detectable.
+ * All fields except {@code schemaVersion} are optional; discovery may populate a subset
+ * depending on what is detectable in the environment.
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public final class JwsInstallation {
+
+    private static final String SCHEMA_VERSION = "1.0";
 
     private final Path catalinaHome;
     private final Path catalinaBase;
@@ -23,6 +25,7 @@ public final class JwsInstallation {
     private final ContainerInfo containerInfo;
     private final NativeInfo nativeInfo;
     private final Integer pid;
+    private final String uptime;
 
     private JwsInstallation(Builder builder) {
         this.catalinaHome = builder.catalinaHome;
@@ -34,53 +37,53 @@ public final class JwsInstallation {
         this.containerInfo = builder.containerInfo;
         this.nativeInfo = builder.nativeInfo;
         this.pid = builder.pid;
+        this.uptime = builder.uptime;
+    }
+
+    public String getSchemaVersion() {
+        return SCHEMA_VERSION;
     }
 
     @JsonSerialize(using = ToStringSerializer.class)
-    @JsonProperty("catalinaHome")
     public Path getCatalinaHome() {
         return catalinaHome;
     }
 
     @JsonSerialize(using = ToStringSerializer.class)
-    @JsonProperty("catalinaBase")
     public Path getCatalinaBase() {
         return catalinaBase;
     }
 
-    @JsonProperty("tomcatVersion")
     public String getTomcatVersion() {
         return tomcatVersion;
     }
 
-    @JsonProperty("jwsVersion")
     public String getJwsVersion() {
         return jwsVersion;
     }
 
-    @JsonProperty("jvmInfo")
     public JvmInfo getJvmInfo() {
         return jvmInfo;
     }
 
-    @JsonProperty("osInfo")
     public OsInfo getOsInfo() {
         return osInfo;
     }
 
-    @JsonProperty("containerInfo")
     public ContainerInfo getContainerInfo() {
         return containerInfo;
     }
 
-    @JsonProperty("nativeInfo")
     public NativeInfo getNativeInfo() {
         return nativeInfo;
     }
 
-    @JsonProperty("pid")
     public Integer getPid() {
         return pid;
+    }
+
+    public String getUptime() {
+        return uptime;
     }
 
     public static Builder builder() {
@@ -97,6 +100,7 @@ public final class JwsInstallation {
         private ContainerInfo containerInfo;
         private NativeInfo nativeInfo;
         private Integer pid;
+        private String uptime;
 
         public Builder catalinaHome(Path catalinaHome) {
             this.catalinaHome = catalinaHome;
@@ -143,6 +147,11 @@ public final class JwsInstallation {
             return this;
         }
 
+        public Builder uptime(String uptime) {
+            this.uptime = uptime;
+            return this;
+        }
+
         public JwsInstallation build() {
             return new JwsInstallation(this);
         }
@@ -156,6 +165,7 @@ public final class JwsInstallation {
                 + ", tomcatVersion='" + tomcatVersion + '\''
                 + ", jwsVersion='" + jwsVersion + '\''
                 + ", pid=" + pid
+                + ", uptime='" + uptime + '\''
                 + ", jvmInfo=" + jvmInfo
                 + ", osInfo=" + osInfo
                 + ", containerInfo=" + containerInfo

@@ -1,7 +1,6 @@
 package org.jboss.jws.diag.summary.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Container runtime detected for the running Tomcat process.
@@ -17,12 +16,10 @@ public final class ContainerInfo {
         this.detectionMethod = builder.detectionMethod;
     }
 
-    @JsonProperty("type")
     public ContainerType getType() {
         return type;
     }
 
-    @JsonProperty("detectionMethod")
     public String getDetectionMethod() {
         return detectionMethod;
     }

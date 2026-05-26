@@ -1,7 +1,6 @@
 package org.jboss.jws.diag.summary.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Information about native libraries (APR, OpenSSL) loaded by Tomcat.
@@ -11,7 +10,7 @@ public final class NativeInfo {
 
     private final String aprVersion;
     private final String opensslVersion;
-    private final boolean loaded;
+    private final Boolean loaded;
 
     private NativeInfo(Builder builder) {
         this.aprVersion = builder.aprVersion;
@@ -19,18 +18,15 @@ public final class NativeInfo {
         this.loaded = builder.loaded;
     }
 
-    @JsonProperty("aprVersion")
     public String getAprVersion() {
         return aprVersion;
     }
 
-    @JsonProperty("opensslVersion")
     public String getOpensslVersion() {
         return opensslVersion;
     }
 
-    @JsonProperty("loaded")
-    public boolean isLoaded() {
+    public Boolean isLoaded() {
         return loaded;
     }
 
@@ -41,7 +37,7 @@ public final class NativeInfo {
     public static final class Builder {
         private String aprVersion;
         private String opensslVersion;
-        private boolean loaded;
+        private Boolean loaded;
 
         public Builder aprVersion(String aprVersion) {
             this.aprVersion = aprVersion;
@@ -53,7 +49,7 @@ public final class NativeInfo {
             return this;
         }
 
-        public Builder loaded(boolean loaded) {
+        public Builder loaded(Boolean loaded) {
             this.loaded = loaded;
             return this;
         }
