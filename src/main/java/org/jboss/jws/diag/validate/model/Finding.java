@@ -28,7 +28,7 @@ public final class Finding {
         return new Builder();
     }
 
-    public static final class Builder{
+    public static final class Builder {
 
         private String ruleId;
         private String category;
@@ -94,6 +94,7 @@ public final class Finding {
         return fix;
     }
 
+    @Override
     public String toString() {
         return "Finding{" +
                 "ruleId='" + ruleId + '\'' +

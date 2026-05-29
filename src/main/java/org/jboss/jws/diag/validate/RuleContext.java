@@ -2,7 +2,7 @@ package org.jboss.jws.diag.validate;
 
 import java.nio.file.Path;
 
-public class RuleContext {
+public final class RuleContext {
     private final Path catalinaBase;
 
     public RuleContext(Path catalinaBase) {
