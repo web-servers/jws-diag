@@ -9,19 +9,19 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 public final class ContainerInfo {
 
     private final ContainerType type;
-    private final String detectionMethod;
+    private final String detectedVia;
 
     private ContainerInfo(Builder builder) {
         this.type = builder.type;
-        this.detectionMethod = builder.detectionMethod;
+        this.detectedVia = builder.detectedVia;
     }
 
     public ContainerType getType() {
         return type;
     }
 
-    public String getDetectionMethod() {
-        return detectionMethod;
+    public String getDetectedVia() {
+        return detectedVia;
     }
 
     public static Builder builder() {
@@ -30,15 +30,15 @@ public final class ContainerInfo {
 
     public static final class Builder {
         private ContainerType type;
-        private String detectionMethod;
+        private String detectedVia;
 
         public Builder type(ContainerType type) {
             this.type = type;
             return this;
         }
 
-        public Builder detectionMethod(String detectionMethod) {
-            this.detectionMethod = detectionMethod;
+        public Builder detectedVia(String detectedVia) {
+            this.detectedVia = detectedVia;
             return this;
         }
 
@@ -49,6 +49,6 @@ public final class ContainerInfo {
 
     @Override
     public String toString() {
-        return "ContainerInfo{type=" + type + ", detectionMethod='" + detectionMethod + "'}";
+        return "ContainerInfo{type=" + type + ", detectedVia='" + detectedVia + "'}";
     }
 }

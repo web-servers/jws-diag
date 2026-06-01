@@ -6,10 +6,12 @@ import org.junit.jupiter.api.Test;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class JwsInstallationModelTest {
 
@@ -18,14 +20,14 @@ class JwsInstallationModelTest {
     // --- JwsInstallation ---
 
     @Test
-    void schemaVersionIsAlways10() throws Exception {
+    void schemaVersionIsAlways10() {
         JwsInstallation inst = JwsInstallation.builder().build();
         JsonNode json = mapper.valueToTree(inst);
         assertThat(json.get("schemaVersion").asText()).isEqualTo("1.0");
     }
 
     @Test
-    void nullFieldsAreExcludedFromJson() throws Exception {
+    void nullFieldsAreExcludedFromJson() {
         JwsInstallation inst = JwsInstallation.builder()
                 .tomcatVersion("10.1.49")
                 .build();
@@ -39,7 +41,7 @@ class JwsInstallationModelTest {
     }
 
     @Test
-    void pathFieldsSerializeAsPlainStrings() throws Exception {
+    void pathFieldsSerializeAsPlainStrings() {
         Path home = Paths.get("/opt/tomcat");
         Path base = Paths.get("/opt/tomcat/conf");
         JwsInstallation inst = JwsInstallation.builder()
@@ -52,12 +54,31 @@ class JwsInstallationModelTest {
     }
 
     @Test
+    void subModelJsonKeysMatchDesignDocSchema() {
+        JwsInstallation inst = JwsInstallation.builder()
+                .jvmInfo(JvmInfo.builder().version("17").build())
+                .osInfo(OsInfo.builder().name("RHEL").build())
+                .containerInfo(ContainerInfo.builder().type(ContainerType.PODMAN).build())
+                .nativeInfo(NativeInfo.builder().aprVersion("1.7.2").build())
+                .build();
+        JsonNode json = mapper.valueToTree(inst);
+        assertThat(json.has("jvm")).isTrue();
+        assertThat(json.has("os")).isTrue();
+        assertThat(json.has("container")).isTrue();
+        assertThat(json.has("nativeLib")).isTrue();
+        assertThat(json.has("jvmInfo")).isFalse();
+        assertThat(json.has("osInfo")).isFalse();
+        assertThat(json.has("containerInfo")).isFalse();
+        assertThat(json.has("nativeInfo")).isFalse();
+    }
+
+    @Test
     void builderPopulatesAllFields() {
         JvmInfo jvm = JvmInfo.builder().version("17.0.10").build();
         OsInfo os = OsInfo.builder().name("RHEL").version("9.3").arch("x86_64").build();
         ContainerInfo container = ContainerInfo.builder()
                 .type(ContainerType.PODMAN)
-                .detectionMethod("/run/.containerenv")
+                .detectedVia("/run/.containerenv")
                 .build();
         NativeInfo native_ = NativeInfo.builder()
                 .aprVersion("1.7.2")
@@ -91,7 +112,7 @@ class JwsInstallationModelTest {
     // --- JvmInfo ---
 
     @Test
-    void jvmInfoJavaHomeSerializesAsString() throws Exception {
+    void jvmInfoJavaHomeSerializesAsString() {
         Path javaHome = Paths.get("/usr/lib/jvm/java-17");
         JvmInfo jvm = JvmInfo.builder()
                 .version("17.0.10")
@@ -103,7 +124,7 @@ class JwsInstallationModelTest {
     }
 
     @Test
-    void jvmInfoNullFieldsExcluded() throws Exception {
+    void jvmInfoNullFieldsExcluded() {
         JvmInfo jvm = JvmInfo.builder().version("17.0.10").build();
         JsonNode json = mapper.valueToTree(jvm);
         assertThat(json.has("vendor")).isFalse();
@@ -113,15 +134,16 @@ class JwsInstallationModelTest {
 
     @Test
     void jvmArgsListIsImmutable() {
-        List<String> args = Arrays.asList("-Xmx512m", "-Xms256m");
+        List<String> args = new ArrayList<>(Arrays.asList("-Xmx512m", "-Xms256m"));
         JvmInfo jvm = JvmInfo.builder().jvmArgs(args).build();
-        assertThat(jvm.getJvmArgs()).containsExactly("-Xmx512m", "-Xms256m");
+        assertThatThrownBy(() -> jvm.getJvmArgs().add("-verbose"))
+                .isInstanceOf(UnsupportedOperationException.class);
     }
 
     // --- NativeInfo ---
 
     @Test
-    void nativeInfoLoadedNullIsExcludedFromJson() throws Exception {
+    void nativeInfoLoadedNullIsExcludedFromJson() {
         NativeInfo native_ = NativeInfo.builder()
                 .aprVersion("1.7.2")
                 .build();
@@ -131,7 +153,7 @@ class JwsInstallationModelTest {
     }
 
     @Test
-    void nativeInfoLoadedFalseIsIncludedInJson() throws Exception {
+    void nativeInfoLoadedFalseIsIncludedInJson() {
         NativeInfo native_ = NativeInfo.builder().loaded(false).build();
         JsonNode json = mapper.valueToTree(native_);
         assertThat(json.get("loaded").asBoolean()).isFalse();
@@ -140,7 +162,7 @@ class JwsInstallationModelTest {
     // --- OsInfo ---
 
     @Test
-    void osInfoBuilderAndSerialization() throws Exception {
+    void osInfoBuilderAndSerialization() {
         OsInfo os = OsInfo.builder().name("RHEL").version("9.3").arch("x86_64").build();
         JsonNode json = mapper.valueToTree(os);
         assertThat(json.get("name").asText()).isEqualTo("RHEL");
@@ -151,13 +173,13 @@ class JwsInstallationModelTest {
     // --- ContainerInfo ---
 
     @Test
-    void containerInfoEnumSerializesAsLowercaseString() throws Exception {
+    void containerInfoEnumSerializesAsLowercaseString() {
         ContainerInfo info = ContainerInfo.builder()
                 .type(ContainerType.DOCKER)
-                .detectionMethod("/.dockerenv")
+                .detectedVia("/.dockerenv")
                 .build();
         JsonNode json = mapper.valueToTree(info);
         assertThat(json.get("type").asText()).isEqualTo("docker");
-        assertThat(json.get("detectionMethod").asText()).isEqualTo("/.dockerenv");
+        assertThat(json.get("detectedVia").asText()).isEqualTo("/.dockerenv");
     }
 }

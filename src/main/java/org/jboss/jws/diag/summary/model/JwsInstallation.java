@@ -1,6 +1,7 @@
 package org.jboss.jws.diag.summary.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 
@@ -62,18 +63,22 @@ public final class JwsInstallation {
         return jwsVersion;
     }
 
+    @JsonProperty("jvm")
     public JvmInfo getJvmInfo() {
         return jvmInfo;
     }
 
+    @JsonProperty("os")
     public OsInfo getOsInfo() {
         return osInfo;
     }
 
+    @JsonProperty("container")
     public ContainerInfo getContainerInfo() {
         return containerInfo;
     }
 
+    @JsonProperty("nativeLib")
     public NativeInfo getNativeInfo() {
         return nativeInfo;
     }
