@@ -1,6 +1,7 @@
 package org.jboss.jws.diag.validate;
 
 import org.jboss.jws.diag.common.ExitCodes;
+import org.jboss.jws.diag.common.RuleId;
 import org.jboss.jws.diag.common.Severity;
 
 import org.jboss.jws.diag.validate.model.Finding;
@@ -25,7 +26,7 @@ public class ValidateCommandTest {
     void shouldReturnWarningWhenFindingsContainOnlyWarnings() {
         List<Finding> findings = List.of(
                 Finding.builder()
-                        .ruleId("SEC-004")
+                        .ruleId(RuleId.SEC_004)
                         .category("Security")
                         .severity(Severity.WARN)
                         .summary("Version Banner Exposure Check")
@@ -43,7 +44,7 @@ public class ValidateCommandTest {
     void shouldReturnErrorWhenFindingsContainsOnlyErrors() {
         List<Finding> findings = List.of(
                 Finding.builder()
-                        .ruleId("SEC-001")
+                        .ruleId(RuleId.SEC_001)
                         .category("Security")
                         .severity(Severity.ERROR)
                         .summary("Root User Check")
@@ -61,7 +62,7 @@ public class ValidateCommandTest {
     void shouldReturnErrorWhenFindingsContainWarnAndError() {
         List<Finding> findings = List.of(
                 Finding.builder()
-                        .ruleId("SEC-004")
+                        .ruleId(RuleId.SEC_004)
                         .category("Security")
                         .severity(Severity.WARN)
                         .summary("Version Banner Exposure Check")
@@ -70,7 +71,7 @@ public class ValidateCommandTest {
                         .fix("Configure an <ErrorInfoValve> with showReport=\"false\" and showServerInfo=\"false\" inside your Host block")
                         .build(),
                 Finding.builder()
-                        .ruleId("SEC-001")
+                        .ruleId(RuleId.SEC_001)
                         .category("Security")
                         .severity(Severity.ERROR)
                         .summary("Root User Check")
@@ -88,7 +89,7 @@ public class ValidateCommandTest {
     void shouldReturnErrorWhenFindingsContainErrorAndWarn() {
         List<Finding> findings = List.of(
                 Finding.builder()
-                        .ruleId("SEC-001")
+                        .ruleId(RuleId.SEC_001)
                         .category("Security")
                         .severity(Severity.ERROR)
                         .summary("Root User Check")
@@ -97,7 +98,7 @@ public class ValidateCommandTest {
                         .fix("Run Tomcat as a dedicated, non-root system user")
                         .build(),
                 Finding.builder()
-                        .ruleId("SEC-004")
+                        .ruleId(RuleId.SEC_004)
                         .category("Security")
                         .severity(Severity.WARN)
                         .summary("Version Banner Exposure Check")
@@ -115,7 +116,7 @@ public class ValidateCommandTest {
     void shouldReturnOkWhenFindingsContainOnlyInfo() {
         List<Finding> findings = List.of(
                 Finding.builder()
-                        .ruleId("CONN-004")
+                        .ruleId(RuleId.CONN_004)
                         .category("Connector")
                         .severity(Severity.INFO)
                         .summary("Missing Redirect Port")
@@ -133,7 +134,7 @@ public class ValidateCommandTest {
     void shouldReturnWarningWhenFindingsContainInfoAndWarn() {
         List<Finding> findings = List.of(
                 Finding.builder()
-                        .ruleId("CONN-004")
+                        .ruleId(RuleId.CONN_004)
                         .category("Connector")
                         .severity(Severity.INFO)
                         .summary("Missing Redirect Port")
@@ -142,7 +143,7 @@ public class ValidateCommandTest {
                         .fix("Add redirectPort=\"8443\" to allow automatic HTTPS redirection fields.")
                         .build(),
                 Finding.builder()
-                        .ruleId("SEC-004")
+                        .ruleId(RuleId.SEC_004)
                         .category("Security")
                         .severity(Severity.WARN)
                         .summary("Version Banner Exposure Check")
@@ -160,7 +161,7 @@ public class ValidateCommandTest {
     void shouldReturnWarningWhenFindingsContainWarnAndInfo() {
         List<Finding> findings = List.of(
                 Finding.builder()
-                        .ruleId("SEC-004")
+                        .ruleId(RuleId.SEC_004)
                         .category("Security")
                         .severity(Severity.WARN)
                         .summary("Version Banner Exposure Check")
@@ -169,7 +170,7 @@ public class ValidateCommandTest {
                         .fix("Configure an <ErrorInfoValve> with showReport=\"false\" and showServerInfo=\"false\" inside your Host block")
                         .build(),
                 Finding.builder()
-                        .ruleId("CONN-004")
+                        .ruleId(RuleId.CONN_004)
                         .category("Connector")
                         .severity(Severity.INFO)
                         .summary("Missing Redirect Port")
@@ -187,7 +188,7 @@ public class ValidateCommandTest {
     void shouldReturnErrorWhenFindingsContainInfoAndError() {
         List<Finding> findings = List.of(
                 Finding.builder()
-                        .ruleId("CONN-004")
+                        .ruleId(RuleId.CONN_004)
                         .category("Connector")
                         .severity(Severity.INFO)
                         .summary("Missing Redirect Port")
@@ -196,7 +197,7 @@ public class ValidateCommandTest {
                         .fix("Add redirectPort=\"8443\" to allow automatic HTTPS redirection fields.")
                         .build(),
                 Finding.builder()
-                        .ruleId("SEC-001")
+                        .ruleId(RuleId.CONN_004)
                         .category("Security")
                         .severity(Severity.ERROR)
                         .summary("Root User Check")
@@ -214,7 +215,7 @@ public class ValidateCommandTest {
     void shouldReturnErrorWhenFindingsContainErrorAndInfo() {
         List<Finding> findings = List.of(
                 Finding.builder()
-                        .ruleId("SEC-001")
+                        .ruleId(RuleId.SEC_004)
                         .category("Security")
                         .severity(Severity.ERROR)
                         .summary("Root User Check")
@@ -223,7 +224,7 @@ public class ValidateCommandTest {
                         .fix("Run Tomcat as a dedicated, non-root system user")
                         .build(),
                 Finding.builder()
-                        .ruleId("CONN-004")
+                        .ruleId(RuleId.CONN_004)
                         .category("Connector")
                         .severity(Severity.INFO)
                         .summary("Missing Redirect Port")

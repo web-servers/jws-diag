@@ -1,12 +1,12 @@
 package org.jboss.jws.diag.validate.model;
 
+import org.jboss.jws.diag.common.RuleId;
 import org.jboss.jws.diag.common.Severity;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public final class Finding {
-
-    private final String ruleId;
+    private final RuleId ruleId;
     private final String category;
     private final Severity severity;
     private final String summary;
@@ -29,8 +29,7 @@ public final class Finding {
     }
 
     public static final class Builder {
-
-        private String ruleId;
+        private RuleId ruleId;
         private String category;
         private Severity severity;
         private String summary;
@@ -38,7 +37,7 @@ public final class Finding {
         private String file;
         private String fix;
 
-        public Builder ruleId(String ruleId) {
+        public Builder ruleId(RuleId ruleId) {
             this.ruleId = ruleId;
             return this;
         }
@@ -72,7 +71,7 @@ public final class Finding {
         }
     }
 
-    public String getRuleId() {
+    public RuleId getRuleId() {
         return ruleId;
     }
     public String getCategory() {

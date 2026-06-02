@@ -4,9 +4,12 @@ import org.jboss.jws.diag.common.ExitCodes;
 import org.jboss.jws.diag.common.OutputFormatMixin;
 import org.jboss.jws.diag.common.Severity;
 import org.jboss.jws.diag.validate.model.Finding;
+import org.jboss.jws.diag.validate.rules.security.ShutdownPortConfigRule;
+import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Mixin;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,12 +18,24 @@ import java.util.List;
         mixinStandardHelpOptions = true)
 public class ValidateCommand implements Runnable {
 
+    @CommandLine.Parameters(index = "0", description = "Path to CATALINA_BASE directory")
+    private Path catalinaBase;
+
     @Mixin
     private OutputFormatMixin outputFormat;
 
+    private final List<Rule> rules = List.of(
+            new ShutdownPortConfigRule()
+    );
+
     @Override
     public void run() {
+        RuleContext ctx = RuleContext.from(catalinaBase);
+
         List<Finding> findings = new ArrayList<>();
+        for (Rule rule : rules) {
+            findings.addAll(rule.evaluate(ctx));
+        }
 
         int exitCode = determineExitCode(findings);
         System.exit(exitCode);
