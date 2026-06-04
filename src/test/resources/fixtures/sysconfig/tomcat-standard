@@ -1,0 +1,4 @@
+# Tomcat service configuration
+CATALINA_HOME=/opt/tomcat
+CATALINA_BASE=/etc/tomcat
+JAVA_HOME=/usr/lib/jvm/java-11
