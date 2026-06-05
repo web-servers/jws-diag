@@ -4,7 +4,7 @@ import org.jboss.jws.diag.common.ExitCodes;
 import org.jboss.jws.diag.common.OutputFormatMixin;
 import org.jboss.jws.diag.common.Severity;
 import org.jboss.jws.diag.validate.model.Finding;
-import org.jboss.jws.diag.validate.rules.security.ShutdownPortConfigRule;
+import org.jboss.jws.diag.validate.rules.security.*;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Mixin;
@@ -25,7 +25,12 @@ public class ValidateCommand implements Runnable {
     private OutputFormatMixin outputFormat;
 
     private final List<Rule> rules = List.of(
-            new ShutdownPortConfigRule()
+            new RootUserCheckRule(),
+            new UserDefaultCredentialsRule(),
+            new ShutdownPortConfigRule(),
+            new ErrorValveRule(),
+            new TraceEnabledRule(),
+            new LocalhostBindingRule()
     );
 
     @Override

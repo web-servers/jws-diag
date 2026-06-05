@@ -26,6 +26,7 @@ public class ShutdownPortConfigRule implements Rule {
                     .fix("Set the port attribute of the <Server> element to \"-1\" to disable network-based shutdown.")
                     .build());
         }
+
         return List.of();
     }
 }
