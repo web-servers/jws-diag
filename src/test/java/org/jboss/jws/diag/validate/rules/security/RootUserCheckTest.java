@@ -17,16 +17,14 @@ public class RootUserCheckTest {
 
     @Test
     void shouldPassWhenNotRunningAsRoot() {
-        System.setProperty("user.name", "tomcat");
-        RuleContext ctx = new RuleContext(Path.of("/dummy"), null, null);
+        RuleContext ctx = new RuleContext(Path.of("/dummy"), null, null, "tomcat");
 
         assertThat(rule.evaluate(ctx)).isEmpty();
     }
 
     @Test
     void shouldFlagWhenRunningAsRoot() {
-        System.setProperty("user.name", "root");
-        RuleContext ctx = new RuleContext(Path.of("/dummy"), null, null);
+        RuleContext ctx = new RuleContext(Path.of("/dummy"), null, null, "root");
 
         List<Finding> findings = rule.evaluate(ctx);
 

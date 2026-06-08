@@ -8,6 +8,7 @@ import org.jboss.jws.diag.common.Severity;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -27,18 +28,11 @@ public class UserDefaultCredentialsRule implements Rule {
         Document doc = ctx.getTomcatUsersXml();
 
         if (doc == null) {
-            return List.of(Finding.builder()
-                    .ruleId(RuleId.SEC_002)
-                    .category("Security")
-                    .severity(Severity.ERROR)
-                    .summary("Default Credentials Detected")
-                    .detail("Checks for known default username/password pairs (like tomcat/tomcat, admin/admin)")
-                    .file("tomcat-users.xml")
-                    .fix("Change the default passwords or remove the default accounts entirely")
-                    .build());
+            return List.of();
         }
 
         NodeList users = doc.getElementsByTagName("user");
+        List<Finding> findings = new ArrayList<>();
 
         for (int i = 0; i < users.getLength(); i++) {
             String username = users.item(i).getAttributes()
@@ -52,7 +46,7 @@ public class UserDefaultCredentialsRule implements Rule {
             String pair = username + ":" + password;
 
             if (DEFAULT_CREDENTIALS.contains(pair)) {
-                return List.of(Finding.builder()
+                findings.add(Finding.builder()
                         .ruleId(RuleId.SEC_002)
                         .category("Security")
                         .severity(Severity.ERROR)
@@ -64,6 +58,6 @@ public class UserDefaultCredentialsRule implements Rule {
             }
         }
 
-        return List.of();
+        return findings;
     }
 }

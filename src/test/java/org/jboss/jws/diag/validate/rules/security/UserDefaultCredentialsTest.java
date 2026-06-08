@@ -22,13 +22,13 @@ public class UserDefaultCredentialsTest {
     private Document parseFixture(String resourcePath) throws Exception {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         DocumentBuilder db = dbf.newDocumentBuilder();
-        return db.parse(this.getClass().getResourceAsStream(resourcePath));
+        return db.parse(getClass().getResourceAsStream(resourcePath));
     }
 
     @Test
     void shouldPassWhenNoDefaultCredentialsArePresent() throws Exception {
         Document tomcatUsersXml = parseFixture("/fixtures/security/tomcat-users-clean.xml");
-        RuleContext ctx = new RuleContext(Path.of("/dummy"), null, tomcatUsersXml);
+        RuleContext ctx = new RuleContext(Path.of("/dummy"), null, tomcatUsersXml, "testuser");
 
         assertThat(rule.evaluate(ctx)).isEmpty();
     }
@@ -36,7 +36,7 @@ public class UserDefaultCredentialsTest {
     @Test
     void shouldFlagWhenDefaultCredentialsAreDetected() throws Exception {
         Document tomcatUsersXml = parseFixture("/fixtures/security/tomcat-users-default-creds.xml");
-        RuleContext ctx = new RuleContext(Path.of("/dummy"), null, tomcatUsersXml);
+        RuleContext ctx = new RuleContext(Path.of("/dummy"), null, tomcatUsersXml, "testuser");
 
         List<Finding> findings = rule.evaluate(ctx);
 
@@ -46,12 +46,21 @@ public class UserDefaultCredentialsTest {
     }
 
     @Test
-    void shouldFlagWhenTomcatUsersXmlIsNull() {
-        RuleContext ctx = new RuleContext(Path.of("/dummy"), null, null);
+    void shouldFlagAllUsersWithDefaultCredentials() throws Exception {
+        Document tomcatUsersXml = parseFixture("/fixtures/security/tomcat-users-multiple-default-creds.xml");
+        RuleContext ctx = new RuleContext(Path.of("/dummy"), null, tomcatUsersXml, "testuser");
 
         List<Finding> findings = rule.evaluate(ctx);
 
-        assertThat(findings).hasSize(1);
-        assertThat(findings.get(0).getRuleId()).isEqualTo(RuleId.SEC_002);
+        assertThat(findings).hasSize(2);
+    }
+
+    @Test
+    void shouldPassWhenTomcatUsersXmlIsNull() {
+        RuleContext ctx = new RuleContext(Path.of("/dummy"), null, null, "testuser");
+
+        List<Finding> findings = rule.evaluate(ctx);
+
+        assertThat(findings).isEmpty();
     }
 }

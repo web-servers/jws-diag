@@ -14,6 +14,7 @@ public final class RuleContext {
     private final Path catalinaBase;
     private final Document serverXml;
     private final Document tomcatUsersXml;
+    private final String username;
 
     public static RuleContext fromDisk(Path catalinaBase) {
         Document serverXml = null;
@@ -37,13 +38,14 @@ public final class RuleContext {
             System.err.println("[ERROR] Could not read tomcat-users.xml: " + e.getMessage());
         }
 
-        return new RuleContext(catalinaBase, serverXml, tomcatUsersXml);
+        return new RuleContext(catalinaBase, serverXml, tomcatUsersXml, System.getProperty("user.name"));
     }
 
-    public RuleContext(Path catalinaBase, Document serverXml, Document tomcatUsersXml) {
+    public RuleContext(Path catalinaBase, Document serverXml, Document tomcatUsersXml, String username) {
         this.catalinaBase = catalinaBase;
         this.serverXml = serverXml;
         this.tomcatUsersXml = tomcatUsersXml;
+        this.username = username;
     }
 
     public Path getCatalinaBase() {
@@ -56,6 +58,10 @@ public final class RuleContext {
 
     public Document getTomcatUsersXml() {
         return tomcatUsersXml;
+    }
+
+    public String getUsername() {
+        return username;
     }
 
     private static Document parseXml(Path path) throws SAXException, IOException, ParserConfigurationException {

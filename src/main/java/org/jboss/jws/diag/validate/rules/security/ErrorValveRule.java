@@ -17,21 +17,13 @@ public class ErrorValveRule implements Rule {
         Document doc = ctx.getServerXml();
 
         if (doc == null) {
-            return List.of(Finding.builder()
-                    .ruleId(RuleId.SEC_004)
-                    .category("Security")
-                    .severity(Severity.WARN)
-                    .summary("Version Banner Exposure Check")
-                    .detail("Checks if <Connector> elements expose server metadata, or if an <ErrorInfoValve> is missing inside the <Host> or <Engine> blocks to suppress versions on error pages")
-                    .file("server.xml")
-                    .fix("Configure an <ErrorReportValve> with showReport=\"false\" and showServerInfo=\"false\" inside your Host block")
-                    .build());
+            return List.of();
         }
 
-        NodeList valves =  doc.getElementsByTagName("Valve");
+        NodeList valves = doc.getElementsByTagName("Valve");
 
         for (int i = 0; i < valves.getLength(); i++) {
-            String className =  valves.item(i).getAttributes().getNamedItem("className") != null
+            String className = valves.item(i).getAttributes().getNamedItem("className") != null
                     ? valves.item(i).getAttributes().getNamedItem("className").getNodeValue() : "";
 
             if ("org.apache.catalina.valves.ErrorReportValve".equals(className)) {
@@ -51,9 +43,9 @@ public class ErrorValveRule implements Rule {
                 .category("Security")
                 .severity(Severity.WARN)
                 .summary("Version Banner Exposure Check")
-                .detail("Checks if <Connector> elements expose server metadata, or if an <ErrorInfoValve> is missing inside the <Host> or <Engine> blocks to suppress versions on error pages")
+                .detail("Checks if <Connector> elements expose server metadata, or if an <ErrorReportValve> is missing inside the <Host> or <Engine> blocks to suppress versions on error pages")
                 .file("server.xml")
-                .fix("Configure an <ErrorInfoValve> with showReport=\"false\" and showServerInfo=\"false\" inside your Host block")
+                .fix("Configure an <ErrorReportValve> with showReport=\"false\" and showServerInfo=\"false\" inside your Host block")
                 .build());
     }
 }

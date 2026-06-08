@@ -12,9 +12,8 @@ public class RootUserCheckRule implements Rule {
 
     @Override
     public List<Finding> evaluate(RuleContext ctx) {
-        String username = System.getProperty("user.name");
 
-        if ("root".equals(username)) {
+        if ("root".equals(ctx.getUsername())) {
             return List.of(Finding.builder()
                     .ruleId(RuleId.SEC_001)
                     .category("Security")

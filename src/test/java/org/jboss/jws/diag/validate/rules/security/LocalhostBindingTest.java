@@ -28,7 +28,7 @@ public class LocalhostBindingTest {
     @Test
     void shouldPassWhenConnectorIsBoundToLocalHost() throws Exception {
         Document serverXml = parseFixture("/fixtures/security/server-clean.xml");
-        RuleContext ctx = new RuleContext(Path.of("/dummy"), serverXml, null);
+        RuleContext ctx = new RuleContext(Path.of("/dummy"), serverXml, null, "testuser");
 
         assertThat(rule.evaluate(ctx)).isEmpty();
     }
@@ -36,7 +36,7 @@ public class LocalhostBindingTest {
     @Test
     void shouldFlagWhenConnectorIsNotBoundToLocalHost() throws Exception {
         Document serverXml = parseFixture("/fixtures/security/server-localhost-binding-missing.xml");
-        RuleContext ctx = new RuleContext(Path.of("/dummy"), serverXml, null);
+        RuleContext ctx = new RuleContext(Path.of("/dummy"), serverXml, null, "testuser");
 
         List<Finding> findings = rule.evaluate(ctx);
 
@@ -46,12 +46,21 @@ public class LocalhostBindingTest {
     }
 
     @Test
-    void shouldFlagWhenServerXmlIsNull() {
-        RuleContext ctx = new RuleContext(Path.of("/dummy"), null, null);
+    void shouldFlagAllConnectorsNotBoundToLocalhost() throws Exception {
+        Document serverXml = parseFixture("/fixtures/security/server-localhost-binding-missing-multiple.xml");
+        RuleContext ctx = new RuleContext(Path.of("/dummy"), serverXml, null, "testuser");
 
         List<Finding> findings = rule.evaluate(ctx);
 
-        assertThat(findings).hasSize(1);
-        assertThat(findings.get(0).getRuleId()).isEqualTo(RuleId.SEC_006);
+        assertThat(findings).hasSize(2);
+    }
+
+    @Test
+    void shouldPassWhenServerXmlIsNull() {
+        RuleContext ctx = new RuleContext(Path.of("/dummy"), null, null, "testuser");
+
+        List<Finding> findings = rule.evaluate(ctx);
+
+        assertThat(findings).isEmpty();
     }
 }

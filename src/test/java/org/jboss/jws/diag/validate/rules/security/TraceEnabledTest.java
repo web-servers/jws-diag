@@ -28,7 +28,7 @@ public class TraceEnabledTest {
     @Test
     void shouldPassWhenAllowTraceIsSetToFalse() throws Exception {
         Document serverXml = parseFixture("/fixtures/security/server-clean.xml");
-        RuleContext ctx = new RuleContext(Path.of("/dummy"), serverXml, null);
+        RuleContext ctx = new RuleContext(Path.of("/dummy"), serverXml, null, "testuser");
 
         assertThat(rule.evaluate(ctx)).isEmpty();
     }
@@ -36,7 +36,7 @@ public class TraceEnabledTest {
     @Test
     void shouldFlagWhenAllowTraceIsSetToTrue() throws Exception {
         Document serverXml = parseFixture("/fixtures/security/server-trace-enabled.xml");
-        RuleContext ctx = new RuleContext(Path.of("/dummy"), serverXml, null);
+        RuleContext ctx = new RuleContext(Path.of("/dummy"), serverXml, null, "testuser");
 
         List<Finding> findings = rule.evaluate(ctx);
 
@@ -46,12 +46,21 @@ public class TraceEnabledTest {
     }
 
     @Test
-    void shouldFlagWhenServerXmlIsNull() {
-        RuleContext ctx = new RuleContext(Path.of("/dummy"), null, null);
+    void shouldFlagAllConnectorsWithTraceEnabled() throws Exception {
+        Document serverXml = parseFixture("/fixtures/security/server-trace-enabled-multiple.xml");
+        RuleContext ctx = new RuleContext(Path.of("/dummy"), serverXml, null, "testuser");
 
         List<Finding> findings = rule.evaluate(ctx);
 
-        assertThat(findings).hasSize(1);
-        assertThat(findings.get(0).getRuleId()).isEqualTo(RuleId.SEC_005);
+        assertThat(findings).hasSize(2);
+    }
+
+    @Test
+    void shouldPassWhenServerXmlIsNull() {
+        RuleContext ctx = new RuleContext(Path.of("/dummy"), null, null, "testuser");
+
+        List<Finding> findings = rule.evaluate(ctx);
+
+        assertThat(findings).isEmpty();
     }
 }

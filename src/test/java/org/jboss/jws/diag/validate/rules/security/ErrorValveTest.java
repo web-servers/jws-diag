@@ -28,7 +28,7 @@ public class ErrorValveTest {
     @Test
     void shouldPassWhenErrorReportValveIsPresent() throws Exception {
         Document serverXml = parseFixture("/fixtures/security/server-clean.xml");
-        RuleContext ctx = new RuleContext(Path.of("/dummy"), serverXml, null);
+        RuleContext ctx = new RuleContext(Path.of("/dummy"), serverXml, null, "testuser");
 
         assertThat(rule.evaluate(ctx)).isEmpty();
     }
@@ -36,7 +36,7 @@ public class ErrorValveTest {
     @Test
     void shouldFlagWhenErrorReportValveIsNotPresent() throws Exception {
         Document serverXml = parseFixture("/fixtures/security/server-error-valve-missing.xml");
-        RuleContext ctx = new RuleContext(Path.of("/dummy"), serverXml, null);
+        RuleContext ctx = new RuleContext(Path.of("/dummy"), serverXml, null, "testuser");
 
         List<Finding> findings = rule.evaluate(ctx);
 
@@ -48,7 +48,7 @@ public class ErrorValveTest {
     @Test
     void shouldFlagWhenErrorReportValveIsPresentButShowReportIsNotPresent() throws Exception {
         Document serverXml = parseFixture("/fixtures/security/server-error-valve-show-report-missing.xml");
-        RuleContext ctx = new RuleContext(Path.of("/dummy"), serverXml, null);
+        RuleContext ctx = new RuleContext(Path.of("/dummy"), serverXml, null, "testuser");
 
         List<Finding> findings = rule.evaluate(ctx);
 
@@ -60,7 +60,7 @@ public class ErrorValveTest {
     @Test
     void shouldFlagWhenErrorReportValveIsPresentButShowServerInfoIsNotPresent() throws Exception {
         Document serverXml = parseFixture("/fixtures/security/server-error-valve-show-server-info-missing.xml");
-        RuleContext ctx = new RuleContext(Path.of("/dummy"), serverXml, null);
+        RuleContext ctx = new RuleContext(Path.of("/dummy"), serverXml, null, "testuser");
 
         List<Finding> findings = rule.evaluate(ctx);
 
@@ -70,12 +70,11 @@ public class ErrorValveTest {
     }
 
     @Test
-    void shouldFlagWhenServerXmlIsNull() {
-        RuleContext ctx = new RuleContext(Path.of("/dummy"), null, null);
+    void shouldPassWhenServerXmlIsNull() {
+        RuleContext ctx = new RuleContext(Path.of("/dummy"), null, null, "testuser");
 
         List<Finding> findings = rule.evaluate(ctx);
 
-        assertThat(findings).hasSize(1);
-        assertThat(findings.get(0).getRuleId()).isEqualTo(RuleId.SEC_004);
+        assertThat(findings).isEmpty();
     }
 }

@@ -28,7 +28,7 @@ public class ShutdownPortConfigTest {
     @Test
     void shouldPassWhenShutdownPortIsDisabled() throws Exception {
         Document serverXml = parseFixture("/fixtures/security/server-clean.xml");
-        RuleContext ctx = new RuleContext(Path.of("/dummy"), serverXml, null);
+        RuleContext ctx = new RuleContext(Path.of("/dummy"), serverXml, null, "testuser");
 
         assertThat(rule.evaluate(ctx)).isEmpty();
     }
@@ -36,7 +36,7 @@ public class ShutdownPortConfigTest {
     @Test
     void shouldFlagWhenShutdownPortIsEnabled() throws Exception {
         Document serverXml = parseFixture("/fixtures/security/server-shutdown-port-enabled.xml");
-        RuleContext ctx = new RuleContext(Path.of("/dummy"), serverXml, null);
+        RuleContext ctx = new RuleContext(Path.of("/dummy"), serverXml, null, "testuser");
 
         List<Finding> findings = rule.evaluate(ctx);
 
@@ -47,7 +47,7 @@ public class ShutdownPortConfigTest {
 
     @Test
     void shouldFlagWhenServerXmlIsNull() {
-        RuleContext ctx = new RuleContext(Path.of("/dummy"), null, null);
+        RuleContext ctx = new RuleContext(Path.of("/dummy"), null, null, "testuser");
 
         List<Finding> findings = rule.evaluate(ctx);
 

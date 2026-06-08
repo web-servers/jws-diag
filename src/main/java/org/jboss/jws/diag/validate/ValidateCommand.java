@@ -4,7 +4,13 @@ import org.jboss.jws.diag.common.ExitCodes;
 import org.jboss.jws.diag.common.OutputFormatMixin;
 import org.jboss.jws.diag.common.Severity;
 import org.jboss.jws.diag.validate.model.Finding;
-import org.jboss.jws.diag.validate.rules.security.*;
+import org.jboss.jws.diag.validate.rules.security.RootUserCheckRule;
+import org.jboss.jws.diag.validate.rules.security.UserDefaultCredentialsRule;
+import org.jboss.jws.diag.validate.rules.security.ShutdownPortConfigRule;
+import org.jboss.jws.diag.validate.rules.security.ErrorValveRule;
+import org.jboss.jws.diag.validate.rules.security.TraceEnabledRule;
+import org.jboss.jws.diag.validate.rules.security.LocalhostBindingRule;
+
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Mixin;
