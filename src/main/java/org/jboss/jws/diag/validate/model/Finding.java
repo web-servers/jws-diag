@@ -1,10 +1,12 @@
 package org.jboss.jws.diag.validate.model;
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import org.jboss.jws.diag.common.RuleId;
 import org.jboss.jws.diag.common.Severity;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonPropertyOrder({"ruleId", "category", "severity", "summary", "detail", "file", "fix"})
 public final class Finding {
     private final RuleId ruleId;
     private final String category;

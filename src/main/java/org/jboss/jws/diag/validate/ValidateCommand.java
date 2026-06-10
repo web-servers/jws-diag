@@ -4,6 +4,8 @@ import org.jboss.jws.diag.common.ExitCodes;
 import org.jboss.jws.diag.common.OutputFormatMixin;
 import org.jboss.jws.diag.common.Severity;
 import org.jboss.jws.diag.validate.model.Finding;
+import org.jboss.jws.diag.validate.output.HumanReadableOutput;
+import org.jboss.jws.diag.validate.output.JsonOutput;
 import org.jboss.jws.diag.validate.rules.security.RootUserCheckRule;
 import org.jboss.jws.diag.validate.rules.security.UserDefaultCredentialsRule;
 import org.jboss.jws.diag.validate.rules.security.ShutdownPortConfigRule;
@@ -49,6 +51,16 @@ public class ValidateCommand implements Runnable {
         }
 
         int exitCode = determineExitCode(findings);
+
+        switch (outputFormat.getFormat()) {
+            case HUMAN:
+                new HumanReadableOutput().print(findings);
+                break;
+            case JSON:
+                new JsonOutput().print(findings, exitCode);
+                break;
+        }
+
         System.exit(exitCode);
     }
 
