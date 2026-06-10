@@ -9,11 +9,11 @@ public class FindingSummary {
 
     public final long errors;
     public final long warnings;
-    public final long infos;
+    public final long info;
 
     public FindingSummary(List<Finding> findings) {
         this.errors = findings.stream().filter(f -> f.getSeverity() == Severity.ERROR).count();
         this.warnings = findings.stream().filter(f -> f.getSeverity() == Severity.WARN).count();
-        this.infos = findings.stream().filter(f -> f.getSeverity() == Severity.INFO).count();
+        this.info = findings.stream().filter(f -> f.getSeverity() == Severity.INFO).count();
     }
 }
