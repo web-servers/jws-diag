@@ -1,0 +1,5 @@
+NAME="Ubuntu"
+VERSION="22.04.3 LTS (Jammy Jellyfish)"
+ID=ubuntu
+VERSION_ID="22.04"
+PRETTY_NAME="Ubuntu 22.04.3 LTS"

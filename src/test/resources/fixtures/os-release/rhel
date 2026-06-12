@@ -1,0 +1,5 @@
+NAME="Red Hat Enterprise Linux"
+VERSION="9.3 (Plow)"
+ID="rhel"
+VERSION_ID="9.3"
+PRETTY_NAME="Red Hat Enterprise Linux 9.3 (Plow)"

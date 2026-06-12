@@ -1,0 +1,5 @@
+NAME="CentOS Stream"
+VERSION="9"
+ID="centos"
+VERSION_ID="9"
+PRETTY_NAME="CentOS Stream 9"
