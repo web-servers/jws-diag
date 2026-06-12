@@ -174,6 +174,35 @@ class CatalinaDiscoveryTest {
         assertThat(result.getCatalinaBase()).isEqualTo(base);
     }
 
+    @Test
+    void catalinaBaseSetViaSystemdConfig() throws IOException {
+        Path home = validTomcatHome("home");
+        Path base = tempDir.resolve("systemd-base");
+        Files.createDirectories(base);
+        Path sysconfig = writeSysconfig("tomcat", "CATALINA_BASE=" + base + "\n");
+
+        CatalinaDiscovery.Result result = discovery(
+            home, null,
+            Map.of(),
+            List.of(sysconfig)
+        ).discover();
+
+        assertThat(result.getCatalinaBase()).isEqualTo(base);
+    }
+
+    @Test
+    void catalinaBaseSetViaProcessDetection() throws IOException {
+        Path home = validTomcatHome("proc-home");
+        Path base = tempDir.resolve("proc-base");
+        Files.createDirectories(base);
+        createProcEntry("88", home, base);
+
+        CatalinaDiscovery.Result result = discovery(null, null, Map.of(), List.of()).discover();
+
+        assertThat(result.getCatalinaHome()).isEqualTo(home);
+        assertThat(result.getCatalinaBase()).isEqualTo(base);
+    }
+
     // ---- edge cases -----------------------------------------------------
 
     @Test
