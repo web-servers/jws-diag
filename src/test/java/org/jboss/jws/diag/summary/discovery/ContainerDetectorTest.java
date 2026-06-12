@@ -73,7 +73,7 @@ class ContainerDetectorTest {
 
         ContainerInfo info = detector(Map.of()).detect();
 
-        assertThat(info.getType()).isEqualTo(ContainerType.DOCKER);
+        assertThat(info.getType()).isEqualTo(ContainerType.CONTAINERD);
         assertThat(info.getDetectedVia()).isEqualTo("/proc/1/cgroup");
     }
 

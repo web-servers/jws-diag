@@ -60,14 +60,19 @@ class JvmDetector {
             List<String> args = splitOnNullByte(bytes);
             List<String> result = new ArrayList<>();
             for (String arg : args) {
-                if ((arg.startsWith("-X") || arg.startsWith("-D")) && !isSensitive(arg)) {
-                    result.add(arg);
+                if (arg.startsWith("-X") || arg.startsWith("-D")) {
+                    result.add(isSensitive(arg) ? redact(arg) : arg);
                 }
             }
             return List.copyOf(result);
-        } catch (IOException e) {
+        } catch (IOException ignored) {
             return List.of();
         }
+    }
+
+    private static String redact(String arg) {
+        int eq = arg.indexOf('=');
+        return eq >= 0 ? arg.substring(0, eq + 1) + "***REDACTED***" : arg + "=***REDACTED***";
     }
 
     private static List<String> splitOnNullByte(byte[] bytes) {

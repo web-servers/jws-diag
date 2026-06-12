@@ -50,8 +50,11 @@ class ContainerDetector {
         if (Files.exists(cgroup)) {
             try {
                 String content = Files.readString(cgroup);
-                if (content.contains("docker") || content.contains("containerd")) {
+                if (content.contains("docker")) {
                     return result(ContainerType.DOCKER, "/proc/1/cgroup");
+                }
+                if (content.contains("containerd")) {
+                    return result(ContainerType.CONTAINERD, "/proc/1/cgroup");
                 }
             } catch (IOException ignored) {
             }

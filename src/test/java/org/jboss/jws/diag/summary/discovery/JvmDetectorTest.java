@@ -55,7 +55,10 @@ class JvmDetectorTest {
 
         JvmInfo info = detector(Map.of(), 42).detect();
 
-        assertThat(info.getJvmArgs()).containsExactly("-Xmx512m", "-Dapp.name=tomcat");
+        assertThat(info.getJvmArgs()).containsExactly(
+                "-Xmx512m",
+                "-Djavax.net.ssl.keyStorePassword=***REDACTED***",
+                "-Dapp.name=tomcat");
         assertThat(info.getJvmArgs()).noneMatch(a -> a.contains("s3cret"));
     }
 
@@ -70,7 +73,12 @@ class JvmDetectorTest {
 
         JvmInfo info = detector(Map.of(), 99).detect();
 
-        assertThat(info.getJvmArgs()).containsExactly("-Xmx256m");
+        assertThat(info.getJvmArgs()).containsExactly(
+                "-Dmy.password=***REDACTED***",
+                "-Dmy.secret=***REDACTED***",
+                "-Dmy.credential=***REDACTED***",
+                "-Dmy.keypass=***REDACTED***",
+                "-Xmx256m");
     }
 
     @Test
