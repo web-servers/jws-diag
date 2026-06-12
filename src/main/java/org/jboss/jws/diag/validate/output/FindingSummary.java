@@ -7,13 +7,25 @@ import java.util.List;
 
 public class FindingSummary {
 
-    public final long errors;
-    public final long warnings;
-    public final long info;
+    private final long errors;
+    private final long warnings;
+    private final long info;
 
     public FindingSummary(List<Finding> findings) {
         this.errors = findings.stream().filter(f -> f.getSeverity() == Severity.ERROR).count();
         this.warnings = findings.stream().filter(f -> f.getSeverity() == Severity.WARN).count();
         this.info = findings.stream().filter(f -> f.getSeverity() == Severity.INFO).count();
+    }
+
+    public long getErrors() {
+        return errors;
+    }
+
+    public long getWarnings() {
+        return warnings;
+    }
+
+    public long getInfo() {
+        return info;
     }
 }

@@ -26,9 +26,9 @@ public class JsonOutput {
         FindingSummary summary = new FindingSummary(findings);
 
         Map<String, Object> summaryMap = new LinkedHashMap<>();
-        summaryMap.put("errors", summary.errors);
-        summaryMap.put("warnings", summary.warnings);
-        summaryMap.put("info", summary.info);
+        summaryMap.put("errors", summary.getErrors());
+        summaryMap.put("warnings", summary.getWarnings());
+        summaryMap.put("info", summary.getInfo());
 
         Map<String, Object> output = new LinkedHashMap<>();
         output.put("findings", findings);

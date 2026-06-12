@@ -47,6 +47,6 @@ public class HumanReadableOutput {
         FindingSummary summary = new FindingSummary(findings);
 
         System.out.printf("Summary: %d error(s), %d warning(s), %d info(s)%n",
-        summary.errors, summary.warnings, summary.info);
+        summary.getErrors(), summary.getWarnings(), summary.getInfo());
     }
 }
