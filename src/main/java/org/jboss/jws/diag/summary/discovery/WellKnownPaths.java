@@ -66,7 +66,7 @@ class WellKnownPaths {
         }
         // Prefer newest version (jws6 > jws5) by numeric suffix descending.
         candidates.sort(Comparator.comparing(
-            p -> p.getParent().getParent().getParent().getFileName().toString(),
+            p -> p.getParent().getParent().getParent().getParent().getFileName().toString(),
             Comparator.comparingInt(WellKnownPaths::jwsVersion).reversed()
         ));
         return candidates.isEmpty() ? Optional.empty() : Optional.of(candidates.get(0));
