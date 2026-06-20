@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Connector attributes use ${...} placeholders resolved via catalina.properties -->
+<Server port="8005" shutdown="SHUTDOWN">
+  <Service name="Catalina">
+
+    <Connector port="${http.port}" protocol="HTTP/1.1" connectionTimeout="20000"/>
+
+    <Engine name="Catalina" defaultHost="localhost">
+      <Host name="localhost" appBase="${app.base}"
+            unpackWARs="true" autoDeploy="true">
+      </Host>
+    </Engine>
+  </Service>
+</Server>

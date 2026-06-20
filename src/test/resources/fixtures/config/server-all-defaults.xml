@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Connector with only port; all other attrs absent → should resolve to Tomcat defaults -->
+<Server port="8005" shutdown="SHUTDOWN">
+  <Service name="Catalina">
+
+    <Connector port="8443"/>
+
+    <Engine name="Catalina" defaultHost="localhost">
+      <Host name="localhost">
+      </Host>
+    </Engine>
+  </Service>
+</Server>
