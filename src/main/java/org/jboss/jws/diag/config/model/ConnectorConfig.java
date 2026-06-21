@@ -23,6 +23,7 @@ public final class ConnectorConfig {
     private final Integer proxyPort;
     private final ConfigValue<String> compression;
     private final ConfigValue<Boolean> secretRequired;
+    private final SslHostConfig ssl;
 
     private ConnectorConfig(Builder b) {
         this.port = b.port;
@@ -36,6 +37,7 @@ public final class ConnectorConfig {
         this.proxyPort = b.proxyPort;
         this.compression = b.compression;
         this.secretRequired = b.secretRequired;
+        this.ssl = b.ssl;
     }
 
     public int getPort() { return port; }
@@ -49,6 +51,7 @@ public final class ConnectorConfig {
     public Integer getProxyPort() { return proxyPort; }
     public ConfigValue<String> getCompression() { return compression; }
     public ConfigValue<Boolean> getSecretRequired() { return secretRequired; }
+    public SslHostConfig getSsl() { return ssl; }
 
     public static Builder builder() { return new Builder(); }
 
@@ -64,6 +67,7 @@ public final class ConnectorConfig {
         private Integer proxyPort;
         private ConfigValue<String> compression;
         private ConfigValue<Boolean> secretRequired;
+        private SslHostConfig ssl;
 
         public Builder port(int v) { this.port = v; return this; }
         public Builder protocol(ConfigValue<String> v) { this.protocol = v; return this; }
@@ -76,6 +80,7 @@ public final class ConnectorConfig {
         public Builder proxyPort(Integer v) { this.proxyPort = v; return this; }
         public Builder compression(ConfigValue<String> v) { this.compression = v; return this; }
         public Builder secretRequired(ConfigValue<Boolean> v) { this.secretRequired = v; return this; }
+        public Builder ssl(SslHostConfig v) { this.ssl = v; return this; }
 
         public ConfigValue<String> getProtocol() { return protocol; }
         public ConfigValue<Boolean> getSslEnabled() { return sslEnabled; }

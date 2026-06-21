@@ -1,5 +1,6 @@
 package org.jboss.jws.diag.config.parser;
 
+import org.jboss.jws.diag.config.model.CertificateConfig;
 import org.jboss.jws.diag.config.model.ConfigValue;
 import org.jboss.jws.diag.config.model.ConnectorConfig;
 import org.jboss.jws.diag.config.model.ExecutorConfig;
@@ -24,8 +25,10 @@ public final class TomcatDefaults {
     public static final boolean HOST_AUTO_DEPLOY = true;
     public static final boolean HOST_UNPACK_WARS = true;
 
-    public static final int EXECUTOR_MAX_THREADS        = 200;
-    public static final int EXECUTOR_MIN_SPARE_THREADS  = 10;
+    public static final int    EXECUTOR_MAX_THREADS        = 200;
+    public static final int    EXECUTOR_MIN_SPARE_THREADS  = 10;
+
+    public static final String CERTIFICATE_KEYSTORE_TYPE   = "JKS";
 
     private TomcatDefaults() {}
 
@@ -67,5 +70,10 @@ public final class TomcatDefaults {
             b.maxThreads(ConfigValue.defaulted(EXECUTOR_MAX_THREADS));
         if (b.getMinSpareThreads() == null)
             b.minSpareThreads(ConfigValue.defaulted(EXECUTOR_MIN_SPARE_THREADS));
+    }
+
+    public static void applyCertificateDefaults(CertificateConfig.Builder b) {
+        if (b.getKeystoreType() == null)
+            b.keystoreType(ConfigValue.defaulted(CERTIFICATE_KEYSTORE_TYPE));
     }
 }
