@@ -3,7 +3,7 @@ package org.jboss.jws.diag.summary.model;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import org.jboss.jws.diag.common.UnixPathSerializer;
 
 import java.nio.file.Path;
 
@@ -45,12 +45,12 @@ public final class JwsInstallation {
         return SCHEMA_VERSION;
     }
 
-    @JsonSerialize(using = ToStringSerializer.class)
+    @JsonSerialize(using = UnixPathSerializer.class)
     public Path getCatalinaHome() {
         return catalinaHome;
     }
 
-    @JsonSerialize(using = ToStringSerializer.class)
+    @JsonSerialize(using = UnixPathSerializer.class)
     public Path getCatalinaBase() {
         return catalinaBase;
     }
