@@ -15,9 +15,10 @@ public final class TomcatDefaults {
     public static final int     CONNECTOR_MAX_THREADS        = 200;
     public static final int     CONNECTOR_CONNECTION_TIMEOUT = 60000;
     public static final int     CONNECTOR_MAX_CONNECTIONS    = 8192;
-    public static final String  CONNECTOR_PROTOCOL           = "HTTP/1.1";
-    public static final boolean CONNECTOR_SSL_ENABLED        = false;
-    public static final boolean CONNECTOR_COMPRESSION        = false;
+    public static final String  CONNECTOR_PROTOCOL              = "HTTP/1.1";
+    public static final boolean CONNECTOR_SSL_ENABLED           = false;
+    public static final String  CONNECTOR_COMPRESSION           = "off";
+    public static final boolean CONNECTOR_AJP_SECRET_REQUIRED   = true;
 
     public static final String  HOST_APP_BASE    = "webapps";
     public static final boolean HOST_AUTO_DEPLOY = true;
@@ -42,6 +43,14 @@ public final class TomcatDefaults {
             b.maxConnections(ConfigValue.defaulted(CONNECTOR_MAX_CONNECTIONS));
         if (b.getCompression() == null)
             b.compression(ConfigValue.defaulted(CONNECTOR_COMPRESSION));
+        if (b.getSecretRequired() == null && isAjp(b))
+            b.secretRequired(ConfigValue.defaulted(CONNECTOR_AJP_SECRET_REQUIRED));
+    }
+
+    private static boolean isAjp(ConnectorConfig.Builder b) {
+        ConfigValue<String> proto = b.getProtocol();
+        return proto != null && proto.getValue() != null
+                && proto.getValue().toUpperCase(java.util.Locale.ROOT).contains("AJP");
     }
 
     public static void applyHostDefaults(HostConfig.Builder b) {

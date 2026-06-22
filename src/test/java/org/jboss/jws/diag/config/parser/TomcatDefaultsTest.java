@@ -31,8 +31,11 @@ class TomcatDefaultsTest {
         assertThat(c.getMaxConnections().getValue()).isEqualTo(8192);
         assertThat(c.getMaxConnections().isExplicit()).isFalse();
 
-        assertThat(c.getCompression().getValue()).isFalse();
+        assertThat(c.getCompression().getValue()).isEqualTo("off");
         assertThat(c.getCompression().isExplicit()).isFalse();
+
+        // HTTP connector: no secretRequired default
+        assertThat(c.getSecretRequired()).isNull();
     }
 
     @Test
@@ -113,5 +116,52 @@ class TomcatDefaultsTest {
 
         assertThat(e.getMinSpareThreads().getValue()).isEqualTo(10);
         assertThat(e.getMinSpareThreads().isExplicit()).isFalse();
+    }
+
+    @Test
+    void ajpConnectorGetsSecretRequiredDefault() {
+        ConnectorConfig.Builder b = ConnectorConfig.builder()
+                .port(8009)
+                .protocol(ConfigValue.explicit("AJP/1.3"));
+        TomcatDefaults.applyConnectorDefaults(b);
+        ConnectorConfig c = b.build();
+
+        assertThat(c.getSecretRequired()).isNotNull();
+        assertThat(c.getSecretRequired().getValue()).isTrue();
+        assertThat(c.getSecretRequired().isExplicit()).isFalse();
+    }
+
+    @Test
+    void httpConnectorDoesNotGetSecretRequired() {
+        ConnectorConfig.Builder b = ConnectorConfig.builder()
+                .port(8080)
+                .protocol(ConfigValue.explicit("HTTP/1.1"));
+        TomcatDefaults.applyConnectorDefaults(b);
+        ConnectorConfig c = b.build();
+
+        assertThat(c.getSecretRequired()).isNull();
+    }
+
+    @Test
+    void explicitSecretRequiredNotOverwritten() {
+        ConnectorConfig.Builder b = ConnectorConfig.builder()
+                .port(8009)
+                .protocol(ConfigValue.explicit("AJP/1.3"))
+                .secretRequired(ConfigValue.explicit(false));
+        TomcatDefaults.applyConnectorDefaults(b);
+        ConnectorConfig c = b.build();
+
+        assertThat(c.getSecretRequired().getValue()).isFalse();
+        assertThat(c.getSecretRequired().isExplicit()).isTrue();
+    }
+
+    @Test
+    void compressionDefaultIsStringOff() {
+        ConnectorConfig.Builder b = ConnectorConfig.builder().port(8080);
+        TomcatDefaults.applyConnectorDefaults(b);
+        ConnectorConfig c = b.build();
+
+        assertThat(c.getCompression().getValue()).isEqualTo("off");
+        assertThat(c.getCompression().isExplicit()).isFalse();
     }
 }

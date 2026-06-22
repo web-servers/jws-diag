@@ -21,7 +21,8 @@ public final class ConnectorConfig {
     private final String executorRef;
     private final String proxyName;
     private final Integer proxyPort;
-    private final ConfigValue<Boolean> compression;
+    private final ConfigValue<String> compression;
+    private final ConfigValue<Boolean> secretRequired;
 
     private ConnectorConfig(Builder b) {
         this.port = b.port;
@@ -34,6 +35,7 @@ public final class ConnectorConfig {
         this.proxyName = b.proxyName;
         this.proxyPort = b.proxyPort;
         this.compression = b.compression;
+        this.secretRequired = b.secretRequired;
     }
 
     public int getPort() { return port; }
@@ -45,7 +47,8 @@ public final class ConnectorConfig {
     public String getExecutorRef() { return executorRef; }
     public String getProxyName() { return proxyName; }
     public Integer getProxyPort() { return proxyPort; }
-    public ConfigValue<Boolean> getCompression() { return compression; }
+    public ConfigValue<String> getCompression() { return compression; }
+    public ConfigValue<Boolean> getSecretRequired() { return secretRequired; }
 
     public static Builder builder() { return new Builder(); }
 
@@ -59,7 +62,8 @@ public final class ConnectorConfig {
         private String executorRef;
         private String proxyName;
         private Integer proxyPort;
-        private ConfigValue<Boolean> compression;
+        private ConfigValue<String> compression;
+        private ConfigValue<Boolean> secretRequired;
 
         public Builder port(int v) { this.port = v; return this; }
         public Builder protocol(ConfigValue<String> v) { this.protocol = v; return this; }
@@ -70,14 +74,16 @@ public final class ConnectorConfig {
         public Builder executorRef(String v) { this.executorRef = v; return this; }
         public Builder proxyName(String v) { this.proxyName = v; return this; }
         public Builder proxyPort(Integer v) { this.proxyPort = v; return this; }
-        public Builder compression(ConfigValue<Boolean> v) { this.compression = v; return this; }
+        public Builder compression(ConfigValue<String> v) { this.compression = v; return this; }
+        public Builder secretRequired(ConfigValue<Boolean> v) { this.secretRequired = v; return this; }
 
         public ConfigValue<String> getProtocol() { return protocol; }
         public ConfigValue<Boolean> getSslEnabled() { return sslEnabled; }
         public ConfigValue<Integer> getMaxThreads() { return maxThreads; }
         public ConfigValue<Integer> getConnectionTimeout() { return connectionTimeout; }
         public ConfigValue<Integer> getMaxConnections() { return maxConnections; }
-        public ConfigValue<Boolean> getCompression() { return compression; }
+        public ConfigValue<String> getCompression() { return compression; }
+        public ConfigValue<Boolean> getSecretRequired() { return secretRequired; }
 
         public ConnectorConfig build() { return new ConnectorConfig(this); }
     }

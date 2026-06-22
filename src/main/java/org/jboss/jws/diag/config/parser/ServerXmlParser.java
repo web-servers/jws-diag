@@ -182,7 +182,11 @@ public final class ServerXmlParser {
 
         String compression = attr(el, "compression", null);
         if (compression != null)
-            b.compression(ConfigValue.explicit(Boolean.parseBoolean(compression)));
+            b.compression(ConfigValue.explicit(compression));
+
+        String secretRequired = attr(el, "secretRequired", null);
+        if (secretRequired != null)
+            b.secretRequired(ConfigValue.explicit(Boolean.parseBoolean(secretRequired)));
 
         String executorRef = attr(el, "executor", null);
         if (executorRef != null)

@@ -173,6 +173,34 @@ class ServerXmlParserTest {
     }
 
     @Test
+    void ajpConnectorGetsSecretRequiredDefault() throws IOException {
+        ServiceConfig svc = parser.parse(fixture("server-multi-connector.xml")).getServices().get(0);
+        ConnectorConfig ajp = svc.getConnectors().get(2);
+
+        assertThat(ajp.getSecretRequired()).isNotNull();
+        assertThat(ajp.getSecretRequired().getValue()).isTrue();
+        assertThat(ajp.getSecretRequired().isExplicit()).isFalse();
+    }
+
+    @Test
+    void httpConnectorDoesNotHaveSecretRequired() throws IOException {
+        ServiceConfig svc = parser.parse(fixture("server-multi-connector.xml")).getServices().get(0);
+        ConnectorConfig http = svc.getConnectors().get(0);
+
+        assertThat(http.getSecretRequired()).isNull();
+    }
+
+    @Test
+    void compressionParsedAsString() throws IOException {
+        // server-proxy-valve.xml has no compression attr → default "off"
+        ServiceConfig svc = parser.parse(fixture("server-valid-basic.xml")).getServices().get(0);
+        ConnectorConfig c = svc.getConnectors().get(0);
+
+        assertThat(c.getCompression().getValue()).isEqualTo("off");
+        assertThat(c.getCompression().isExplicit()).isFalse();
+    }
+
+    @Test
     void executorParsed() throws IOException {
         ServiceConfig svc = parser.parse(fixture("server-executor.xml")).getServices().get(0);
         assertThat(svc.getExecutors()).hasSize(1);
