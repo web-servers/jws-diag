@@ -12,8 +12,7 @@ import org.jboss.jws.diag.validate.rules.security.ShutdownPortConfigRule;
 import org.jboss.jws.diag.validate.rules.security.ErrorValveRule;
 import org.jboss.jws.diag.validate.rules.security.TraceEnabledRule;
 import org.jboss.jws.diag.validate.rules.security.LocalhostBindingRule;
-
-import org.jboss.jws.diag.validate.rules.tls.DeprecatedProtocolsRule;
+import org.jboss.jws.diag.validate.rules.tls.*;
 
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
@@ -41,7 +40,12 @@ public class ValidateCommand implements Runnable {
             new ErrorValveRule(),
             new TraceEnabledRule(),
             new LocalhostBindingRule(),
-            new DeprecatedProtocolsRule()
+            new DeprecatedProtocolsRule(),
+            new CertificateExpiryRule(),
+            new BadKeystorePathRule(),
+            new MissingSecureFlagRule(),
+            new MissingSslHostConfigRule(),
+            new WeakCipherSuitesRule()
     );
 
     @Override
