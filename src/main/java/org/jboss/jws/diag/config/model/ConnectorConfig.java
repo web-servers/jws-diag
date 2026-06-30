@@ -2,6 +2,9 @@ package org.jboss.jws.diag.config.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
+import java.util.Collections;
+import java.util.List;
+
 /**
  * Represents a {@code <Connector>} element in {@code server.xml}.
  *
@@ -23,6 +26,7 @@ public final class ConnectorConfig {
     private final Integer proxyPort;
     private final ConfigValue<String> compression;
     private final ConfigValue<Boolean> secretRequired;
+    private final List<SslHostConfig> sslHostConfigs;
 
     private ConnectorConfig(Builder b) {
         this.port = b.port;
@@ -36,6 +40,8 @@ public final class ConnectorConfig {
         this.proxyPort = b.proxyPort;
         this.compression = b.compression;
         this.secretRequired = b.secretRequired;
+        this.sslHostConfigs = b.sslHostConfigs != null
+                ? Collections.unmodifiableList(b.sslHostConfigs) : null;
     }
 
     public int getPort() { return port; }
@@ -49,6 +55,7 @@ public final class ConnectorConfig {
     public Integer getProxyPort() { return proxyPort; }
     public ConfigValue<String> getCompression() { return compression; }
     public ConfigValue<Boolean> getSecretRequired() { return secretRequired; }
+    public List<SslHostConfig> getSslHostConfigs() { return sslHostConfigs; }
 
     public static Builder builder() { return new Builder(); }
 
@@ -64,6 +71,7 @@ public final class ConnectorConfig {
         private Integer proxyPort;
         private ConfigValue<String> compression;
         private ConfigValue<Boolean> secretRequired;
+        private List<SslHostConfig> sslHostConfigs;
 
         public Builder port(int v) { this.port = v; return this; }
         public Builder protocol(ConfigValue<String> v) { this.protocol = v; return this; }
@@ -76,6 +84,7 @@ public final class ConnectorConfig {
         public Builder proxyPort(Integer v) { this.proxyPort = v; return this; }
         public Builder compression(ConfigValue<String> v) { this.compression = v; return this; }
         public Builder secretRequired(ConfigValue<Boolean> v) { this.secretRequired = v; return this; }
+        public Builder sslHostConfigs(List<SslHostConfig> v) { this.sslHostConfigs = v; return this; }
 
         public ConfigValue<String> getProtocol() { return protocol; }
         public ConfigValue<Boolean> getSslEnabled() { return sslEnabled; }

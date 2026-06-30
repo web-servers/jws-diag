@@ -1,13 +1,17 @@
 package org.jboss.jws.diag.config.parser;
 
+import org.jboss.jws.diag.common.RedactionFilter;
+import org.jboss.jws.diag.config.model.CertificateConfig;
 import org.jboss.jws.diag.config.model.ConfigValue;
 import org.jboss.jws.diag.config.model.ConnectorConfig;
 import org.jboss.jws.diag.config.model.EngineConfig;
 import org.jboss.jws.diag.config.model.ExecutorConfig;
 import org.jboss.jws.diag.config.model.HostConfig;
 import org.jboss.jws.diag.config.model.ListenerConfig;
+import org.jboss.jws.diag.config.model.RealmConfig;
 import org.jboss.jws.diag.config.model.ServerConfig;
 import org.jboss.jws.diag.config.model.ServiceConfig;
+import org.jboss.jws.diag.config.model.SslHostConfig;
 import org.jboss.jws.diag.config.model.ValveConfig;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -29,9 +33,10 @@ import java.util.Map;
 /**
  * XXE-safe DOM parser for Tomcat {@code server.xml}.
  *
- * <p>Extracts connectors, executors, engine, hosts, and valves. Applies
- * {@link TomcatDefaults} for any attribute absent from the file. Resolves
- * {@code ${...}} placeholders via {@link PropertyResolver}.
+ * <p>Extracts connectors, executors, SSL host config, realms, hosts, and valves.
+ * Applies {@link TomcatDefaults} for absent attributes, resolves {@code ${...}}
+ * placeholders via {@link PropertyResolver}, and redacts sensitive values via
+ * {@link RedactionFilter}.
  */
 public final class ServerXmlParser {
 
@@ -133,12 +138,16 @@ public final class ServerXmlParser {
                 .namePrefix(attr(el, "namePrefix", null));
 
         String maxThreads = attr(el, "maxThreads", null);
-        if (maxThreads != null)
-            b.maxThreads(ConfigValue.explicit(Integer.parseInt(maxThreads)));
+        if (maxThreads != null) {
+            try { b.maxThreads(ConfigValue.explicit(Integer.parseInt(maxThreads))); }
+            catch (NumberFormatException ignored) { }
+        }
 
         String minSpare = attr(el, "minSpareThreads", null);
-        if (minSpare != null)
-            b.minSpareThreads(ConfigValue.explicit(Integer.parseInt(minSpare)));
+        if (minSpare != null) {
+            try { b.minSpareThreads(ConfigValue.explicit(Integer.parseInt(minSpare))); }
+            catch (NumberFormatException ignored) { }
+        }
 
         TomcatDefaults.applyExecutorDefaults(b);
         return b.build();
@@ -169,16 +178,22 @@ public final class ServerXmlParser {
             b.sslEnabled(ConfigValue.explicit(Boolean.parseBoolean(ssl)));
 
         String maxThreads = attr(el, "maxThreads", null);
-        if (maxThreads != null)
-            b.maxThreads(ConfigValue.explicit(Integer.parseInt(maxThreads)));
+        if (maxThreads != null) {
+            try { b.maxThreads(ConfigValue.explicit(Integer.parseInt(maxThreads))); }
+            catch (NumberFormatException ignored) { }
+        }
 
         String connTimeout = attr(el, "connectionTimeout", null);
-        if (connTimeout != null)
-            b.connectionTimeout(ConfigValue.explicit(Integer.parseInt(connTimeout)));
+        if (connTimeout != null) {
+            try { b.connectionTimeout(ConfigValue.explicit(Integer.parseInt(connTimeout))); }
+            catch (NumberFormatException ignored) { }
+        }
 
         String maxConn = attr(el, "maxConnections", null);
-        if (maxConn != null)
-            b.maxConnections(ConfigValue.explicit(Integer.parseInt(maxConn)));
+        if (maxConn != null) {
+            try { b.maxConnections(ConfigValue.explicit(Integer.parseInt(maxConn))); }
+            catch (NumberFormatException ignored) { }
+        }
 
         String compression = attr(el, "compression", null);
         if (compression != null)
@@ -197,10 +212,69 @@ public final class ServerXmlParser {
             b.proxyName(proxyName);
 
         String proxyPort = attr(el, "proxyPort", null);
-        if (proxyPort != null)
-            b.proxyPort(Integer.parseInt(proxyPort));
+        if (proxyPort != null) {
+            try { b.proxyPort(Integer.parseInt(proxyPort)); }
+            catch (NumberFormatException ignored) { }
+        }
+
+        List<SslHostConfig> sslConfigs = parseSslHostConfigs(el);
+        if (!sslConfigs.isEmpty())
+            b.sslHostConfigs(sslConfigs);
 
         TomcatDefaults.applyConnectorDefaults(b);
+        return b.build();
+    }
+
+    private List<SslHostConfig> parseSslHostConfigs(Element connector) {
+        List<SslHostConfig> result = new ArrayList<>();
+        NodeList nodes = connector.getElementsByTagName("SSLHostConfig");
+        for (int i = 0; i < nodes.getLength(); i++) {
+            Element el = (Element) nodes.item(i);
+            if (el.getParentNode() == connector) {
+                result.add(parseSslHostConfig(el));
+            }
+        }
+        return result;
+    }
+
+    private SslHostConfig parseSslHostConfig(Element el) {
+        List<CertificateConfig> certs = parseCertificates(el);
+        return SslHostConfig.builder()
+                .hostName(attr(el, "hostName", null))
+                .protocols(attr(el, "protocols", null))
+                .sslEnabledProtocols(attr(el, "sslEnabledProtocols", null))
+                .ciphers(attr(el, "ciphers", null))
+                .certificateVerification(attr(el, "certificateVerification", null))
+                .certificates(certs.isEmpty() ? null : certs)
+                .build();
+    }
+
+    private List<CertificateConfig> parseCertificates(Element sslHostConfig) {
+        List<CertificateConfig> result = new ArrayList<>();
+        NodeList nodes = sslHostConfig.getElementsByTagName("Certificate");
+        for (int i = 0; i < nodes.getLength(); i++) {
+            Element el = (Element) nodes.item(i);
+            if (el.getParentNode() == sslHostConfig) {
+                result.add(parseCertificate(el));
+            }
+        }
+        return result;
+    }
+
+    private CertificateConfig parseCertificate(Element el) {
+        CertificateConfig.Builder b = CertificateConfig.builder()
+                .keystoreFile(attr(el, "certificateKeystoreFile", null))
+                .type(attr(el, "type", null));
+
+        String keystorePass = attr(el, "certificateKeystorePassword", null);
+        if (keystorePass != null)
+            b.keystorePass(keystorePass);
+
+        String keystoreType = attr(el, "certificateKeystoreType", null);
+        if (keystoreType != null)
+            b.keystoreType(ConfigValue.explicit(keystoreType));
+
+        TomcatDefaults.applyCertificateDefaults(b);
         return b.build();
     }
 
@@ -213,6 +287,7 @@ public final class ServerXmlParser {
                         .name(attr(el, "name", null))
                         .defaultHost(attr(el, "defaultHost", null))
                         .hosts(parseHosts(el))
+                        .realm(parseRealm(el))
                         .build();
             }
         }
@@ -251,8 +326,36 @@ public final class ServerXmlParser {
         if (!valves.isEmpty())
             b.valves(valves);
 
+        b.realm(parseRealm(el));
+
         TomcatDefaults.applyHostDefaults(b);
         return b.build();
+    }
+
+    private RealmConfig parseRealm(Element parent) {
+        NodeList nodes = parent.getElementsByTagName("Realm");
+        for (int i = 0; i < nodes.getLength(); i++) {
+            Element el = (Element) nodes.item(i);
+            if (el.getParentNode() == parent) {
+                return parseRealmElement(el);
+            }
+        }
+        return null;
+    }
+
+    private RealmConfig parseRealmElement(Element el) {
+        List<RealmConfig> nested = new ArrayList<>();
+        NodeList children = el.getElementsByTagName("Realm");
+        for (int i = 0; i < children.getLength(); i++) {
+            Element child = (Element) children.item(i);
+            if (child.getParentNode() == el) {
+                nested.add(parseRealmElement(child));
+            }
+        }
+        return RealmConfig.builder()
+                .className(attr(el, "className", null))
+                .nestedRealms(nested.isEmpty() ? null : nested)
+                .build();
     }
 
     private List<ValveConfig> parseValves(Element parent) {
@@ -272,7 +375,7 @@ public final class ServerXmlParser {
         for (int i = 0; i < el.getAttributes().getLength(); i++) {
             org.w3c.dom.Attr a = (org.w3c.dom.Attr) el.getAttributes().item(i);
             if (!"className".equals(a.getName())) {
-                attrs.put(a.getName(), resolver.resolve(a.getValue()));
+                attrs.put(a.getName(), RedactionFilter.redact(a.getName(), resolver.resolve(a.getValue())));
             }
         }
         return ValveConfig.builder()
@@ -284,7 +387,7 @@ public final class ServerXmlParser {
     private String attr(Element el, String name, String defaultValue) {
         String raw = el.getAttribute(name);
         if (raw == null || raw.isEmpty()) return defaultValue;
-        return resolver.resolve(raw);
+        return RedactionFilter.redact(name, resolver.resolve(raw));
     }
 
     private int intAttr(Element el, String name, int defaultValue) {

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- VAULT token in certificateKeystorePassword must be preserved as opaque string, not redacted -->
+<Server port="8005" shutdown="SHUTDOWN">
+  <Service name="Catalina">
+
+    <Connector port="8443" protocol="org.apache.coyote.http11.Http11NioProtocol"
+               SSLEnabled="true" connectionTimeout="20000">
+      <SSLHostConfig>
+        <Certificate certificateKeystoreFile="conf/localhost-rsa.jks"
+                     certificateKeystorePassword="${VAULT::ssl::keystorePassword::1}"
+                     type="RSA"/>
+      </SSLHostConfig>
+    </Connector>
+
+    <Engine name="Catalina" defaultHost="localhost">
+      <Host name="localhost" appBase="webapps"
+            unpackWARs="true" autoDeploy="true">
+      </Host>
+    </Engine>
+  </Service>
+</Server>
