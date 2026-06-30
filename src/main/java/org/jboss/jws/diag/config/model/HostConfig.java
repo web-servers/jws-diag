@@ -16,6 +16,7 @@ public final class HostConfig {
     private final ConfigValue<Boolean> autoDeploy;
     private final ConfigValue<Boolean> unpackWARs;
     private final List<ValveConfig> valves;
+    private final RealmConfig realm;
 
     private HostConfig(Builder b) {
         this.name = b.name;
@@ -24,6 +25,7 @@ public final class HostConfig {
         this.unpackWARs = b.unpackWARs;
         this.valves = b.valves != null
                 ? Collections.unmodifiableList(b.valves) : Collections.emptyList();
+        this.realm = b.realm;
     }
 
     public String getName() { return name; }
@@ -31,6 +33,7 @@ public final class HostConfig {
     public ConfigValue<Boolean> getAutoDeploy() { return autoDeploy; }
     public ConfigValue<Boolean> getUnpackWARs() { return unpackWARs; }
     public List<ValveConfig> getValves() { return valves; }
+    public RealmConfig getRealm() { return realm; }
 
     public static Builder builder() { return new Builder(); }
 
@@ -40,12 +43,14 @@ public final class HostConfig {
         private ConfigValue<Boolean> autoDeploy;
         private ConfigValue<Boolean> unpackWARs;
         private List<ValveConfig> valves;
+        private RealmConfig realm;
 
         public Builder name(String v) { this.name = v; return this; }
         public Builder appBase(ConfigValue<String> v) { this.appBase = v; return this; }
         public Builder autoDeploy(ConfigValue<Boolean> v) { this.autoDeploy = v; return this; }
         public Builder unpackWARs(ConfigValue<Boolean> v) { this.unpackWARs = v; return this; }
         public Builder valves(List<ValveConfig> v) { this.valves = v; return this; }
+        public Builder realm(RealmConfig v) { this.realm = v; return this; }
 
         public ConfigValue<String> getAppBase() { return appBase; }
         public ConfigValue<Boolean> getAutoDeploy() { return autoDeploy; }
