@@ -39,7 +39,7 @@ public class PropertyResolver {
         return new PropertyResolver(sysProps, catProps, System.getenv());
     }
 
-    PropertyResolver(Map<String, String> systemProperties,
+    public PropertyResolver(Map<String, String> systemProperties,
                      Map<String, String> catalinaProperties,
                      Map<String, String> environment) {
         this.systemProperties = systemProperties;

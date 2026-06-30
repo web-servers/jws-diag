@@ -1,0 +1,113 @@
+{
+  "schemaVersion" : "1.0",
+  "shutdownPort" : 8005,
+  "shutdownCommand" : "SHUTDOWN",
+  "listeners" : [ ],
+  "services" : [ {
+    "name" : "Catalina",
+    "connectors" : [ {
+      "port" : 8080,
+      "protocol" : {
+        "value" : "HTTP/1.1",
+        "explicit" : true
+      },
+      "sslEnabled" : {
+        "value" : false,
+        "explicit" : false
+      },
+      "maxThreads" : {
+        "value" : 200,
+        "explicit" : false
+      },
+      "connectionTimeout" : {
+        "value" : 20000,
+        "explicit" : true
+      },
+      "maxConnections" : {
+        "value" : 8192,
+        "explicit" : false
+      },
+      "compression" : {
+        "value" : "off",
+        "explicit" : false
+      }
+    }, {
+      "port" : 8443,
+      "protocol" : {
+        "value" : "org.apache.coyote.http11.Http11NioProtocol",
+        "explicit" : true
+      },
+      "sslEnabled" : {
+        "value" : true,
+        "explicit" : true
+      },
+      "maxThreads" : {
+        "value" : 150,
+        "explicit" : true
+      },
+      "connectionTimeout" : {
+        "value" : 20000,
+        "explicit" : true
+      },
+      "maxConnections" : {
+        "value" : 8192,
+        "explicit" : false
+      },
+      "compression" : {
+        "value" : "off",
+        "explicit" : false
+      }
+    }, {
+      "port" : 8009,
+      "protocol" : {
+        "value" : "AJP/1.3",
+        "explicit" : true
+      },
+      "sslEnabled" : {
+        "value" : false,
+        "explicit" : false
+      },
+      "maxThreads" : {
+        "value" : 200,
+        "explicit" : false
+      },
+      "connectionTimeout" : {
+        "value" : 60000,
+        "explicit" : false
+      },
+      "maxConnections" : {
+        "value" : 8192,
+        "explicit" : false
+      },
+      "compression" : {
+        "value" : "off",
+        "explicit" : false
+      },
+      "secretRequired" : {
+        "value" : true,
+        "explicit" : false
+      }
+    } ],
+    "executors" : [ ],
+    "engine" : {
+      "name" : "Catalina",
+      "defaultHost" : "localhost",
+      "hosts" : [ {
+        "name" : "localhost",
+        "appBase" : {
+          "value" : "webapps",
+          "explicit" : true
+        },
+        "autoDeploy" : {
+          "value" : true,
+          "explicit" : true
+        },
+        "unpackWARs" : {
+          "value" : true,
+          "explicit" : true
+        },
+        "valves" : [ ]
+      } ]
+    }
+  } ]
+}

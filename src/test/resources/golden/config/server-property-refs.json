@@ -1,0 +1,57 @@
+{
+  "schemaVersion" : "1.0",
+  "shutdownPort" : 8005,
+  "shutdownCommand" : "SHUTDOWN",
+  "listeners" : [ ],
+  "services" : [ {
+    "name" : "Catalina",
+    "connectors" : [ {
+      "port" : 8080,
+      "protocol" : {
+        "value" : "HTTP/1.1",
+        "explicit" : true
+      },
+      "sslEnabled" : {
+        "value" : false,
+        "explicit" : false
+      },
+      "maxThreads" : {
+        "value" : 200,
+        "explicit" : false
+      },
+      "connectionTimeout" : {
+        "value" : 20000,
+        "explicit" : true
+      },
+      "maxConnections" : {
+        "value" : 8192,
+        "explicit" : false
+      },
+      "compression" : {
+        "value" : "off",
+        "explicit" : false
+      }
+    } ],
+    "executors" : [ ],
+    "engine" : {
+      "name" : "Catalina",
+      "defaultHost" : "localhost",
+      "hosts" : [ {
+        "name" : "localhost",
+        "appBase" : {
+          "value" : "${app.base}",
+          "explicit" : true
+        },
+        "autoDeploy" : {
+          "value" : true,
+          "explicit" : true
+        },
+        "unpackWARs" : {
+          "value" : true,
+          "explicit" : true
+        },
+        "valves" : [ ]
+      } ]
+    }
+  } ]
+}
