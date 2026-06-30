@@ -8,7 +8,14 @@ public enum RuleId {
     SEC_003("SEC-003"),
     SEC_004("SEC-004"),
     SEC_005("SEC-005"),
-    SEC_006("SEC-006");
+    SEC_006("SEC-006"),
+
+    TLS_001("TLS-001"),
+    TLS_002("TLS-002"),
+    TLS_003("TLS-003"),
+    TLS_004("TLS-004"),
+    TLS_005("TLS-005"),
+    TLS_006("TLS-006");
 
     private final String id;
 

@@ -14,7 +14,6 @@ import java.util.Set;
 
 public class UserDefaultCredentialsRule implements Rule {
 
-    // Known default username/password pairs to check against
     private static final Set<String> DEFAULT_CREDENTIALS = Set.of(
             "tomcat:tomcat",
             "admin:admin",
