@@ -137,13 +137,17 @@ public final class ServerXmlParser {
                 .name(attr(el, "name", null))
                 .namePrefix(attr(el, "namePrefix", null));
 
-        String maxThreads = el.getAttribute("maxThreads");
-        if (!maxThreads.isEmpty())
-            b.maxThreads(ConfigValue.explicit(Integer.parseInt(maxThreads)));
+        String maxThreads = attr(el, "maxThreads", null);
+        if (maxThreads != null) {
+            try { b.maxThreads(ConfigValue.explicit(Integer.parseInt(maxThreads))); }
+            catch (NumberFormatException ignored) { }
+        }
 
-        String minSpare = el.getAttribute("minSpareThreads");
-        if (!minSpare.isEmpty())
-            b.minSpareThreads(ConfigValue.explicit(Integer.parseInt(minSpare)));
+        String minSpare = attr(el, "minSpareThreads", null);
+        if (minSpare != null) {
+            try { b.minSpareThreads(ConfigValue.explicit(Integer.parseInt(minSpare))); }
+            catch (NumberFormatException ignored) { }
+        }
 
         TomcatDefaults.applyExecutorDefaults(b);
         return b.build();
@@ -173,17 +177,23 @@ public final class ServerXmlParser {
         if (ssl != null)
             b.sslEnabled(ConfigValue.explicit(Boolean.parseBoolean(ssl)));
 
-        String maxThreads = el.getAttribute("maxThreads");
-        if (!maxThreads.isEmpty())
-            b.maxThreads(ConfigValue.explicit(Integer.parseInt(maxThreads)));
+        String maxThreads = attr(el, "maxThreads", null);
+        if (maxThreads != null) {
+            try { b.maxThreads(ConfigValue.explicit(Integer.parseInt(maxThreads))); }
+            catch (NumberFormatException ignored) { }
+        }
 
-        String connTimeout = el.getAttribute("connectionTimeout");
-        if (!connTimeout.isEmpty())
-            b.connectionTimeout(ConfigValue.explicit(Integer.parseInt(connTimeout)));
+        String connTimeout = attr(el, "connectionTimeout", null);
+        if (connTimeout != null) {
+            try { b.connectionTimeout(ConfigValue.explicit(Integer.parseInt(connTimeout))); }
+            catch (NumberFormatException ignored) { }
+        }
 
-        String maxConn = el.getAttribute("maxConnections");
-        if (!maxConn.isEmpty())
-            b.maxConnections(ConfigValue.explicit(Integer.parseInt(maxConn)));
+        String maxConn = attr(el, "maxConnections", null);
+        if (maxConn != null) {
+            try { b.maxConnections(ConfigValue.explicit(Integer.parseInt(maxConn))); }
+            catch (NumberFormatException ignored) { }
+        }
 
         String compression = attr(el, "compression", null);
         if (compression != null)
@@ -201,13 +211,15 @@ public final class ServerXmlParser {
         if (proxyName != null)
             b.proxyName(proxyName);
 
-        String proxyPort = el.getAttribute("proxyPort");
-        if (!proxyPort.isEmpty())
-            b.proxyPort(Integer.parseInt(proxyPort));
+        String proxyPort = attr(el, "proxyPort", null);
+        if (proxyPort != null) {
+            try { b.proxyPort(Integer.parseInt(proxyPort)); }
+            catch (NumberFormatException ignored) { }
+        }
 
         List<SslHostConfig> sslConfigs = parseSslHostConfigs(el);
         if (!sslConfigs.isEmpty())
-            b.ssl(sslConfigs.get(0));
+            b.sslHostConfigs(sslConfigs);
 
         TomcatDefaults.applyConnectorDefaults(b);
         return b.build();
@@ -230,6 +242,7 @@ public final class ServerXmlParser {
         return SslHostConfig.builder()
                 .hostName(attr(el, "hostName", null))
                 .protocols(attr(el, "protocols", null))
+                .sslEnabledProtocols(attr(el, "sslEnabledProtocols", null))
                 .ciphers(attr(el, "ciphers", null))
                 .certificateVerification(attr(el, "certificateVerification", null))
                 .certificates(certs.isEmpty() ? null : certs)

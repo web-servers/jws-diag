@@ -39,20 +39,35 @@ class ServerXmlParserTlsTest {
         ServerConfig cfg = parser.parse(fixture("server-full-tls.xml"));
         ConnectorConfig tls = cfg.getServices().get(0).getConnectors().stream()
                 .filter(c -> c.getPort() == 8443).findFirst().orElseThrow();
-        assertThat(tls.getSsl()).isNotNull();
+        assertThat(tls.getSslHostConfigs()).isNotNull().isNotEmpty();
+    }
+
+    @Test
+    void allSslHostConfigsStored() throws Exception {
+        ServerConfig cfg = parser.parse(fixture("server-full-tls.xml"));
+        ConnectorConfig tls = tlsConnector(cfg);
+        assertThat(tls.getSslHostConfigs()).hasSize(1);
     }
 
     @Test
     void sslHostConfigProtocolsParsed() throws Exception {
         ServerConfig cfg = parser.parse(fixture("server-full-tls.xml"));
-        SslHostConfig ssl = tlsConnector(cfg).getSsl();
+        SslHostConfig ssl = tlsConnector(cfg).getSslHostConfigs().get(0);
         assertThat(ssl.getProtocols()).isEqualTo("TLSv1.2,TLSv1.3");
+    }
+
+    @Test
+    void sslEnabledProtocolsNotPresentWhenAbsent() throws Exception {
+        // server-full-tls.xml uses APR-style "protocols" attribute, not "sslEnabledProtocols"
+        ServerConfig cfg = parser.parse(fixture("server-full-tls.xml"));
+        SslHostConfig ssl = tlsConnector(cfg).getSslHostConfigs().get(0);
+        assertThat(ssl.getSslEnabledProtocols()).isNull();
     }
 
     @Test
     void sslHostConfigCertificateVerificationParsed() throws Exception {
         ServerConfig cfg = parser.parse(fixture("server-full-tls.xml"));
-        SslHostConfig ssl = tlsConnector(cfg).getSsl();
+        SslHostConfig ssl = tlsConnector(cfg).getSslHostConfigs().get(0);
         assertThat(ssl.getCertificateVerification()).isEqualTo("none");
     }
 
@@ -169,7 +184,7 @@ class ServerXmlParserTlsTest {
     }
 
     private CertificateConfig firstCert(ServerConfig cfg) {
-        SslHostConfig ssl = tlsConnector(cfg).getSsl();
+        SslHostConfig ssl = tlsConnector(cfg).getSslHostConfigs().get(0);
         assertThat(ssl).isNotNull();
         assertThat(ssl.getCertificates()).isNotEmpty();
         return ssl.getCertificates().get(0);
