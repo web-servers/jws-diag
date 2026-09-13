@@ -1,6 +1,7 @@
 package org.jboss.jws.diag.summary;
 
 import org.jboss.jws.diag.common.ExitCodes;
+import org.jboss.jws.diag.common.MultiInstanceExitCode;
 import org.jboss.jws.diag.common.OutputFormat;
 import org.jboss.jws.diag.common.OutputFormatMixin;
 import org.jboss.jws.diag.instances.InstanceScanner;
@@ -71,7 +72,6 @@ public class SummaryCommand implements Runnable {
         }
 
         List<JwsInstallation> installations = new ArrayList<>();
-        int skipped = 0;
         for (TomcatInstance inst : instances) {
             try {
                 JwsInstallation installation = DiscoveryModule
@@ -81,7 +81,6 @@ public class SummaryCommand implements Runnable {
             } catch (Exception e) {
                 System.err.println("WARN: Skipping PID " + inst.getPid()
                         + ": discovery failed: " + e.getMessage());
-                skipped++;
             }
         }
 
@@ -95,6 +94,11 @@ public class SummaryCommand implements Runnable {
         }
 
         System.out.println(output);
-        System.exit(skipped > 0 ? ExitCodes.WARNINGS : ExitCodes.OK);
+
+        if (installations.isEmpty()) {
+            System.err.println("ERROR: No instance could be summarized ("
+                    + instances.size() + " discovered, all skipped).");
+        }
+        System.exit(MultiInstanceExitCode.combine(ExitCodes.OK, installations.size(), instances.size()));
     }
 }

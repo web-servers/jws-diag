@@ -1,6 +1,7 @@
 package org.jboss.jws.diag.diff;
 
 import org.jboss.jws.diag.common.ExitCodes;
+import org.jboss.jws.diag.common.MultiInstanceExitCode;
 import org.jboss.jws.diag.common.OutputFormat;
 import org.jboss.jws.diag.common.OutputFormatMixin;
 import org.jboss.jws.diag.config.model.ServerConfig;
@@ -144,7 +145,14 @@ public class DiffCommand implements Runnable {
         }
 
         System.out.println(output);
-        System.exit(report.hasDifferences() ? ExitCodes.WARNINGS : ExitCodes.OK);
+
+        int expected = instances.size() - 1;
+        if (comparisons.isEmpty()) {
+            System.err.println("ERROR: No instance could be compared against the reference ("
+                    + expected + " candidate(s), all skipped).");
+        }
+        int resultCode = report.hasDifferences() ? ExitCodes.WARNINGS : ExitCodes.OK;
+        System.exit(MultiInstanceExitCode.combine(resultCode, comparisons.size(), expected));
     }
 
     private Path resolveServerXml(String flag, Path path) {
