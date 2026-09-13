@@ -32,7 +32,7 @@ public final class MultiDiffHumanFormatter {
         sb.append(String.format("Auto-discovered %d instance(s). Reference: PID %d  %s%n",
                 report.getInstanceCount(),
                 report.getReferencePid(),
-                report.getReferenceBase()));
+                report.getReferenceBase().toString().replace('\\', '/')));
 
         for (InstanceDiffResult result : report.getComparisons()) {
             sb.append('\n');

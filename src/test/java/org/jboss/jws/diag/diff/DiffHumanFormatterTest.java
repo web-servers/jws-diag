@@ -27,8 +27,8 @@ class DiffHumanFormatterTest {
         String out = formatter.format(report(Collections.emptyList()));
 
         assertThat(out).contains("No differences found.");
-        assertThat(out).contains(LEFT.toString());
-        assertThat(out).contains(RIGHT.toString());
+        assertThat(out).contains(LEFT.toString().replace('\\', '/'));
+        assertThat(out).contains(RIGHT.toString().replace('\\', '/'));
     }
 
     @Test

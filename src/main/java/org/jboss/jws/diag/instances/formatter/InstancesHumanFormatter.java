@@ -36,9 +36,9 @@ public final class InstancesHumanFormatter {
             sb.append('\n');
             sb.append(String.format("PID %d%n", inst.getPid()));
             sb.append(String.format("  CATALINA_HOME: %s%n",
-                    inst.getCatalinaHome() != null ? inst.getCatalinaHome() : "(unknown)"));
+                    inst.getCatalinaHome() != null ? inst.getCatalinaHome().toString().replace('\\', '/') : "(unknown)"));
             sb.append(String.format("  CATALINA_BASE: %s%n",
-                    inst.getCatalinaBase() != null ? inst.getCatalinaBase() : "(unknown)"));
+                    inst.getCatalinaBase() != null ? inst.getCatalinaBase().toString().replace('\\', '/') : "(unknown)"));
         }
         return sb.toString();
     }

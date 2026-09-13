@@ -33,8 +33,8 @@ public final class DiffHumanFormatter {
 
     public String format(DiffReport report) {
         StringBuilder sb = new StringBuilder();
-        sb.append(String.format("Diff  left : %s%n", report.getLeft()));
-        sb.append(String.format("      right: %s%n", report.getRight()));
+        sb.append(String.format("Diff  left : %s%n", report.getLeft().toString().replace('\\', '/')));
+        sb.append(String.format("      right: %s%n", report.getRight().toString().replace('\\', '/')));
         sb.append(formatBody(report));
         return sb.toString();
     }
