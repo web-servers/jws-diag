@@ -1,0 +1,25 @@
+# JSON field paths for validate-all, checked by JsonSchemaContractTest.
+# Regenerate: mvn test -Dtest=JsonSchemaContractTest -Djws.schema.update=true
+schemaVersion=1.1
+exitCode
+instanceCount
+instances
+instances[].catalinaBase
+instances[].findings
+instances[].findings[].category
+instances[].findings[].detail
+instances[].findings[].file
+instances[].findings[].fix
+instances[].findings[].ruleId
+instances[].findings[].severity
+instances[].findings[].summary
+instances[].pid
+instances[].summary
+instances[].summary.errors
+instances[].summary.info
+instances[].summary.warnings
+schemaVersion
+summary
+summary.errors
+summary.info
+summary.warnings
