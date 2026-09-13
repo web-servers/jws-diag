@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.jboss.jws.diag.common.SchemaVersions;
 import org.jboss.jws.diag.modcluster.model.ModClusterConfig;
 
 import java.util.List;
@@ -29,7 +30,7 @@ public final class ModClusterJsonFormatter {
     public String format(List<ModClusterConfig> configs) {
         try {
             ObjectNode root = MAPPER.createObjectNode();
-            root.put("schemaVersion", "1.0");
+            root.put("schemaVersion", SchemaVersions.MODCLUSTER);
             root.put("count", configs.size());
             ArrayNode arr = root.putArray("listeners");
             for (ModClusterConfig cfg : configs) {

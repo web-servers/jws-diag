@@ -147,6 +147,8 @@ and automation to distinguish operator-set values from Tomcat defaults.
 | `--version` | Show version and exit |
 | `--format HUMAN\|JSON` | Output format (default: `HUMAN`) |
 
+JSON output carries a per-command `schemaVersion`. See [docs/json-output.md](docs/json-output.md) for what a version change means and how to consume the output safely.
+
 ### `summary` options
 
 | Option | Description |

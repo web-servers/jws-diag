@@ -1,5 +1,6 @@
 package org.jboss.jws.diag.summary.model;
 
+import org.jboss.jws.diag.common.SchemaVersions;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import java.util.List;
@@ -11,8 +12,6 @@ import java.util.List;
 @JsonPropertyOrder({"schemaVersion", "instanceCount", "instances"})
 public final class MultiSummaryReport {
 
-    private static final String SCHEMA_VERSION = "1.0";
-
     private final int instanceCount;
     private final List<JwsInstallation> instances;
 
@@ -22,7 +21,7 @@ public final class MultiSummaryReport {
     }
 
     public String getSchemaVersion() {
-        return SCHEMA_VERSION;
+        return SchemaVersions.SUMMARY;
     }
 
     public int getInstanceCount() {

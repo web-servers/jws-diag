@@ -1,5 +1,6 @@
 package org.jboss.jws.diag.diff.model;
 
+import org.jboss.jws.diag.common.SchemaVersions;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -15,9 +16,6 @@ import java.util.List;
 @JsonPropertyOrder({"schemaVersion", "left", "right", "changeCount", "changes"})
 public final class DiffReport {
 
-    @JsonProperty("schemaVersion")
-    private static final String SCHEMA_VERSION = "1.0";
-
     private final Path leftBase;
     private final Path rightBase;
     private final List<DiffEntry> entries;
@@ -29,7 +27,7 @@ public final class DiffReport {
     }
 
     @JsonProperty("schemaVersion")
-    public String getSchemaVersion() { return SCHEMA_VERSION; }
+    public String getSchemaVersion() { return SchemaVersions.DIFF; }
 
     @JsonProperty("left")
     @JsonSerialize(using = UnixPathSerializer.class)

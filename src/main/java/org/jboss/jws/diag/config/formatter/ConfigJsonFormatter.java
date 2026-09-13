@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.jboss.jws.diag.common.SchemaVersions;
 import org.jboss.jws.diag.config.model.ServerConfig;
 
 /**
@@ -19,7 +20,7 @@ public class ConfigJsonFormatter {
     public String format(ServerConfig config) {
         try {
             ObjectNode root = MAPPER.createObjectNode();
-            root.put("schemaVersion", "1.0");
+            root.put("schemaVersion", SchemaVersions.CONFIG);
             MAPPER.valueToTree(config).fields()
                     .forEachRemaining(e -> root.set(e.getKey(), e.getValue()));
             return MAPPER.writeValueAsString(root);

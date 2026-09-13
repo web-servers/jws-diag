@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.jboss.jws.diag.common.SchemaVersions;
 import org.jboss.jws.diag.logs.model.LogMatch;
 import org.jboss.jws.diag.logs.model.LogPattern;
 import org.jboss.jws.diag.logs.model.LogScanResult;
@@ -17,7 +18,7 @@ public class LogsJsonFormatter {
     public String format(LogScanResult result) {
         try {
             ObjectNode root = MAPPER.createObjectNode();
-            root.put("schemaVersion", "1.0");
+            root.put("schemaVersion", SchemaVersions.LOGS);
             root.put("file", result.getFile().toString());
             root.put("linesScanned", result.getLinesScanned());
 
