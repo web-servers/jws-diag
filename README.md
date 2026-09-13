@@ -251,7 +251,7 @@ Per command:
 |---------|-----|-----|-----|-----|
 | `summary` | all instances reported | some instances skipped | not used | cannot resolve or read installation, or every instance skipped |
 | `config` | all instances reported | some instances skipped | not used | cannot resolve or parse `server.xml`, or every instance skipped |
-| `validate` | no findings above INFO | WARN findings | ERROR findings | cannot resolve `CATALINA_BASE` |
+| `validate` | no findings above INFO | WARN findings, or some instances skipped | ERROR findings | cannot resolve `CATALINA_BASE`, `--all` with `--catalina-base`, or every instance skipped |
 | `diff` | configurations identical | configurations differ, or some instances skipped | not used | cannot resolve or parse either side, or every instance skipped |
 | `logs` | no matches above INFO | WARN matches, or some instances skipped | ERROR matches | cannot resolve or read the log file, or every instance skipped |
 | `modcluster` | configuration shown, **or none present** | not used | not used | cannot resolve or parse `server.xml` |

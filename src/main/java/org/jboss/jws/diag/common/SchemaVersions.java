@@ -18,7 +18,8 @@ public final class SchemaVersions {
 
     public static final String SUMMARY = "1.0";
     public static final String CONFIG = "1.0";
-    public static final String VALIDATE = "1.0";
+    // 1.1: added validate --all output.
+    public static final String VALIDATE = "1.1";
     public static final String DIFF = "1.0";
     public static final String LOGS = "1.0";
     public static final String MODCLUSTER = "1.0";

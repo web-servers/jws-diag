@@ -24,19 +24,26 @@ public class JsonOutput {
     }
 
     public void print(List<Finding> findings, int exitCode) {
+        Map<String, Object> output = new LinkedHashMap<>();
+        output.put("schemaVersion", SchemaVersions.VALIDATE);
+        output.put("findings", findings);
+        output.put("summary", summaryMap(findings));
+        output.put("exitCode", exitCode);
+
+        write(output);
+    }
+
+    static Map<String, Object> summaryMap(List<Finding> findings) {
         FindingSummary summary = new FindingSummary(findings);
 
         Map<String, Object> summaryMap = new LinkedHashMap<>();
         summaryMap.put("errors", summary.getErrors());
         summaryMap.put("warnings", summary.getWarnings());
         summaryMap.put("info", summary.getInfo());
+        return summaryMap;
+    }
 
-        Map<String, Object> output = new LinkedHashMap<>();
-        output.put("schemaVersion", SchemaVersions.VALIDATE);
-        output.put("findings", findings);
-        output.put("summary", summaryMap);
-        output.put("exitCode", exitCode);
-
+    static void write(Map<String, Object> output) {
         try {
             System.out.println(MAPPER.writer(PRINTER).writeValueAsString(output));
         } catch (Exception e) {

@@ -19,7 +19,7 @@ Each command versions its output independently. The payloads are unrelated, so a
 |---------|-----------------|
 | `summary`, `summary --all` | `1.0` |
 | `config`, `config --all` | `1.0` |
-| `validate` | `1.0` |
+| `validate`, `validate --all` | `1.1` (`--all` output added in 1.1) |
 | `diff`, `diff --all` | `1.0` |
 | `logs`, `logs --all` | `1.0` |
 | `modcluster` | `1.0` |

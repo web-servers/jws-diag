@@ -37,7 +37,9 @@ import org.jboss.jws.diag.summary.model.MultiSummaryReport;
 import org.jboss.jws.diag.summary.model.NativeInfo;
 import org.jboss.jws.diag.summary.model.OsInfo;
 import org.jboss.jws.diag.validate.model.Finding;
+import org.jboss.jws.diag.validate.model.InstanceValidationResult;
 import org.jboss.jws.diag.validate.output.JsonOutput;
+import org.jboss.jws.diag.validate.output.MultiJsonOutput;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
@@ -129,16 +131,15 @@ class JsonSchemaContractTest {
 
     @Test
     void validate() throws Exception {
-        List<Finding> findings = List.of(Finding.builder()
-                .ruleId(RuleId.SEC_001)
-                .category("Security")
-                .severity(Severity.WARN)
-                .summary("summary")
-                .detail("detail")
-                .file("server.xml")
-                .fix("fix")
-                .build());
+        List<Finding> findings = fullFindings();
         assertContract("validate", SchemaVersions.VALIDATE, captureStdout(() -> new JsonOutput().print(findings, 1)));
+    }
+
+    @Test
+    void validateAll() throws Exception {
+        List<InstanceValidationResult> results = List.of(new InstanceValidationResult(100, BASE_A, fullFindings()));
+        assertContract("validate-all", SchemaVersions.VALIDATE,
+                captureStdout(() -> new MultiJsonOutput().print(1, results, 1)));
     }
 
     @Test
@@ -212,6 +213,18 @@ class JsonSchemaContractTest {
                 .pid(12345)
                 .uptime("3d 4h")
                 .build();
+    }
+
+    private static List<Finding> fullFindings() {
+        return List.of(Finding.builder()
+                .ruleId(RuleId.SEC_001)
+                .category("Security")
+                .severity(Severity.WARN)
+                .summary("summary")
+                .detail("detail")
+                .file("server.xml")
+                .fix("fix")
+                .build());
     }
 
     private static DiffReport fullDiff() {

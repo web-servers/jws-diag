@@ -224,6 +224,24 @@ diff \
   <(jws-diag config --catalina-home /opt/tomcat-staging --format json)
 ```
 
+### Validate every instance on a host
+
+```bash
+jws-diag validate --all
+```
+
+Each running instance found in `/proc` is validated against its own `CATALINA_BASE`.
+An instance whose `conf/server.xml` cannot be read is skipped with a warning on stderr.
+The exit code is the highest severity across all instances, at least `1` if any were
+skipped, and `3` if none could be validated.
+
+List only the instances with errors:
+
+```bash
+jws-diag validate --all --format json \
+  | jq '.instances[] | select(.summary.errors > 0) | {pid, catalinaBase}'
+```
+
 ### Check which defaults differ from Tomcat baseline
 
 ```bash
