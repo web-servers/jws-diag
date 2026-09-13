@@ -249,14 +249,17 @@ Per command:
 
 | Command | `0` | `1` | `2` | `3` |
 |---------|-----|-----|-----|-----|
-| `summary` | all instances reported | some instances skipped | not used | cannot resolve or read installation |
-| `config` | all instances reported | some instances skipped | not used | cannot resolve or parse `server.xml` |
+| `summary` | all instances reported | some instances skipped | not used | cannot resolve or read installation, or every instance skipped |
+| `config` | all instances reported | some instances skipped | not used | cannot resolve or parse `server.xml`, or every instance skipped |
 | `validate` | no findings above INFO | WARN findings | ERROR findings | cannot resolve `CATALINA_BASE` |
-| `diff` | configurations identical | configurations differ | not used | cannot resolve or parse either side |
-| `logs` | no matches above INFO | WARN matches, or some instances skipped | ERROR matches, or every instance skipped | cannot resolve or read the log file |
+| `diff` | configurations identical | configurations differ, or some instances skipped | not used | cannot resolve or parse either side, or every instance skipped |
+| `logs` | no matches above INFO | WARN matches, or some instances skipped | ERROR matches | cannot resolve or read the log file, or every instance skipped |
 | `modcluster` | configuration shown, **or none present** | not used | not used | cannot resolve or parse `server.xml` |
 | `instances` | instances listed, **or none running** | not used | not used | not used |
 | `bundle` | bundle written complete | bundle written, some files skipped | not used | cannot resolve paths or write the archive |
+
+For `--all`, a run where some instances were skipped is incomplete, so it exits at least
+`1`. A run where every instance was skipped examined nothing, so it exits `3`.
 
 Absence of optional configuration is a result, not a failure: `modcluster` with no
 mod_cluster listener and `instances` with nothing running both exit `0`.

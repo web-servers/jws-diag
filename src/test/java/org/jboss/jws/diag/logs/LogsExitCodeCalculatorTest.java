@@ -54,10 +54,10 @@ class LogsExitCodeCalculatorTest {
     }
 
     @Test
-    void multiScan_whenEveryInstanceWasSkipped_returnsErrors() {
+    void multiScan_whenEveryInstanceWasSkipped_returnsToolFailure() {
         int code = LogsExitCodeCalculator.determineMultiExitCode(List.of(), 3);
 
-        assertThat(code).isEqualTo(ExitCodes.ERRORS);
+        assertThat(code).isEqualTo(ExitCodes.TOOL_FAILURE);
     }
 
     @Test

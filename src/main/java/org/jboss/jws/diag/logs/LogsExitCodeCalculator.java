@@ -1,6 +1,7 @@
 package org.jboss.jws.diag.logs;
 
 import org.jboss.jws.diag.common.ExitCodes;
+import org.jboss.jws.diag.common.MultiInstanceExitCode;
 import org.jboss.jws.diag.common.Severity;
 import org.jboss.jws.diag.logs.model.InstanceLogResult;
 import org.jboss.jws.diag.logs.model.LogPattern;
@@ -26,28 +27,18 @@ public final class LogsExitCodeCalculator {
     /**
      * Exit code for a multi-instance scan.
      *
-     * <p>An empty {@code results} list means every discovered instance was skipped, so
-     * nothing was scanned at all; that is a failure rather than a clean run. When only
-     * some instances were skipped the run is reported as a warning, matching the
-     * partial-failure behaviour of {@code summary --all} and {@code config --all}.
+     * <p>Skipped instances are folded in by {@link MultiInstanceExitCode}: if nothing
+     * was scanned the tool failed, and a partial scan is at least a warning.
      *
      * @param results    per-instance results for the instances that were scanned
      * @param discovered number of instances discovered before any were skipped
      */
     public static int determineMultiExitCode(List<InstanceLogResult> results, int discovered) {
-        if (results.isEmpty()) {
-            return ExitCodes.ERRORS;
-        }
-
         int code = ExitCodes.OK;
         for (InstanceLogResult instanceResult : results) {
             code = highestSeverityCode(instanceResult.getResult(), code);
         }
-
-        if (code == ExitCodes.OK && results.size() < discovered) {
-            return ExitCodes.WARNINGS;
-        }
-        return code;
+        return MultiInstanceExitCode.combine(code, results.size(), discovered);
     }
 
     private static int highestSeverityCode(LogScanResult result, int current) {

@@ -1,6 +1,7 @@
 package org.jboss.jws.diag.config;
 
 import org.jboss.jws.diag.common.ExitCodes;
+import org.jboss.jws.diag.common.MultiInstanceExitCode;
 import org.jboss.jws.diag.common.OutputFormat;
 import org.jboss.jws.diag.common.OutputFormatMixin;
 import org.jboss.jws.diag.config.formatter.ConfigHumanFormatter;
@@ -88,7 +89,6 @@ public class ConfigCommand implements Runnable {
         }
 
         List<InstanceConfigResult> results = new ArrayList<>();
-        int skipped = 0;
         for (TomcatInstance inst : instances) {
             Path base = inst.getCatalinaBase();
             ServerConfig config = parseConfig(base);
@@ -97,7 +97,6 @@ public class ConfigCommand implements Runnable {
             } else {
                 System.err.println("WARN: Skipping PID " + inst.getPid()
                         + ": could not parse config for " + base);
-                skipped++;
             }
         }
 
@@ -111,7 +110,12 @@ public class ConfigCommand implements Runnable {
         }
 
         System.out.println(output);
-        System.exit(skipped > 0 ? ExitCodes.WARNINGS : ExitCodes.OK);
+
+        if (results.isEmpty()) {
+            System.err.println("ERROR: No instance config could be parsed ("
+                    + instances.size() + " discovered, all skipped).");
+        }
+        System.exit(MultiInstanceExitCode.combine(ExitCodes.OK, results.size(), instances.size()));
     }
 
     private ServerConfig parseConfig(Path base) {
