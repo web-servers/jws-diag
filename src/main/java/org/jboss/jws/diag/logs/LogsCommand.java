@@ -50,7 +50,7 @@ public class LogsCommand implements Runnable {
         if (all && logFile != null) {
             System.err.println("ERROR: --log-file cannot be combined with --all. "
                     + "Each instance's log file is resolved from its own CATALINA_BASE.");
-            System.exit(ExitCodes.ERRORS);
+            System.exit(ExitCodes.TOOL_FAILURE);
             return;
         }
         if (all) {
