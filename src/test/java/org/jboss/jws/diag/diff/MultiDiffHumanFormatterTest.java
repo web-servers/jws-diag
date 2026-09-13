@@ -96,6 +96,23 @@ class MultiDiffHumanFormatterTest {
         assertThat(out).doesNotContain("right:");
     }
 
+    @Test
+    void backslashSeparatedPaths_renderWithForwardSlashes() {
+        // Backslashes stay literal in a Path on Linux too, so this exercises the
+        // Windows rendering on every platform.
+        Path windowsRef = Path.of("\\opt\\jws-6.0\\standalone");
+        Path windowsInst = Path.of("\\opt\\jws-5.7\\standalone");
+        DiffReport diff = new DiffReport(windowsRef, windowsInst, Collections.emptyList());
+        MultiDiffReport report = new MultiDiffReport(100, windowsRef, 2,
+                List.of(new InstanceDiffResult(200, windowsInst, diff)));
+
+        String out = formatter.format(report);
+
+        assertThat(out).contains("/opt/jws-6.0/standalone");
+        assertThat(out).contains("/opt/jws-5.7/standalone");
+        assertThat(out).doesNotContain("\\");
+    }
+
     private MultiDiffReport multiReport(List<InstanceDiffResult> comparisons) {
         return new MultiDiffReport(100, REF_BASE, comparisons.size() + 1, comparisons);
     }

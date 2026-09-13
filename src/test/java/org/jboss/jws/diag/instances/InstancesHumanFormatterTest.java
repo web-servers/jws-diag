@@ -28,7 +28,7 @@ class InstancesHumanFormatterTest {
         String out = formatter.format(List.of(inst));
 
         assertThat(out).contains("12345");
-        assertThat(out).contains(home.toString());
+        assertThat(out).contains(home.toString().replace('\\', '/'));
         assertThat(out).contains("CATALINA_HOME");
         assertThat(out).contains("CATALINA_BASE");
     }
