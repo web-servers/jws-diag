@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.jboss.jws.diag.common.SchemaVersions;
 import org.jboss.jws.diag.instances.model.TomcatInstance;
 
 import java.util.List;
@@ -32,7 +33,7 @@ public final class InstancesJsonFormatter {
     public String format(List<TomcatInstance> instances) {
         try {
             ObjectNode root = MAPPER.createObjectNode();
-            root.put("schemaVersion", "1.0");
+            root.put("schemaVersion", SchemaVersions.INSTANCES);
             root.put("count", instances.size());
             ArrayNode arr = root.putArray("instances");
             for (TomcatInstance inst : instances) {

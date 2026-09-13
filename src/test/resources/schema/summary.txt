@@ -1,0 +1,26 @@
+# JSON field paths for summary, checked by JsonSchemaContractTest.
+# Regenerate: mvn test -Dtest=JsonSchemaContractTest -Djws.schema.update=true
+schemaVersion=1.0
+catalinaBase
+catalinaHome
+container
+container.detectedVia
+container.type
+jvm
+jvm.javaHome
+jvm.jvmArgs
+jvm.vendor
+jvm.version
+jwsVersion
+nativeLib
+nativeLib.aprVersion
+nativeLib.loaded
+nativeLib.opensslVersion
+os
+os.arch
+os.name
+os.version
+pid
+schemaVersion
+tomcatVersion
+uptime

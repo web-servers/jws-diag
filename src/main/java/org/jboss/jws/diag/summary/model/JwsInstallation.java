@@ -1,5 +1,6 @@
 package org.jboss.jws.diag.summary.model;
 
+import org.jboss.jws.diag.common.SchemaVersions;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -14,8 +15,6 @@ import java.nio.file.Path;
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public final class JwsInstallation {
-
-    private static final String SCHEMA_VERSION = "1.0";
 
     private final Path catalinaHome;
     private final Path catalinaBase;
@@ -42,7 +41,7 @@ public final class JwsInstallation {
     }
 
     public String getSchemaVersion() {
-        return SCHEMA_VERSION;
+        return SchemaVersions.SUMMARY;
     }
 
     @JsonSerialize(using = UnixPathSerializer.class)

@@ -1,0 +1,29 @@
+# JSON field paths for summary-all, checked by JsonSchemaContractTest.
+# Regenerate: mvn test -Dtest=JsonSchemaContractTest -Djws.schema.update=true
+schemaVersion=1.0
+instanceCount
+instances
+instances[].catalinaBase
+instances[].catalinaHome
+instances[].container
+instances[].container.detectedVia
+instances[].container.type
+instances[].jvm
+instances[].jvm.javaHome
+instances[].jvm.jvmArgs
+instances[].jvm.vendor
+instances[].jvm.version
+instances[].jwsVersion
+instances[].nativeLib
+instances[].nativeLib.aprVersion
+instances[].nativeLib.loaded
+instances[].nativeLib.opensslVersion
+instances[].os
+instances[].os.arch
+instances[].os.name
+instances[].os.version
+instances[].pid
+instances[].schemaVersion
+instances[].tomcatVersion
+instances[].uptime
+schemaVersion

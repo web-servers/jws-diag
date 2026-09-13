@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.util.DefaultIndenter;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import org.jboss.jws.diag.common.SchemaVersions;
 import org.jboss.jws.diag.validate.model.Finding;
 
 import java.util.LinkedHashMap;
@@ -31,6 +32,7 @@ public class JsonOutput {
         summaryMap.put("info", summary.getInfo());
 
         Map<String, Object> output = new LinkedHashMap<>();
+        output.put("schemaVersion", SchemaVersions.VALIDATE);
         output.put("findings", findings);
         output.put("summary", summaryMap);
         output.put("exitCode", exitCode);

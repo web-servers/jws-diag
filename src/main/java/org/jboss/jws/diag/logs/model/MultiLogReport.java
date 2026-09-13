@@ -1,5 +1,6 @@
 package org.jboss.jws.diag.logs.model;
 
+import org.jboss.jws.diag.common.SchemaVersions;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import java.util.List;
@@ -11,8 +12,6 @@ import java.util.List;
 @JsonPropertyOrder({"schemaVersion", "instanceCount", "instances"})
 public final class MultiLogReport {
 
-    private static final String SCHEMA_VERSION = "1.0";
-
     private final int instanceCount;
     private final List<InstanceLogResult> instances;
 
@@ -22,7 +21,7 @@ public final class MultiLogReport {
     }
 
     public String getSchemaVersion() {
-        return SCHEMA_VERSION;
+        return SchemaVersions.LOGS;
     }
 
     public int getInstanceCount() {

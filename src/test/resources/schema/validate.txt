@@ -1,0 +1,17 @@
+# JSON field paths for validate, checked by JsonSchemaContractTest.
+# Regenerate: mvn test -Dtest=JsonSchemaContractTest -Djws.schema.update=true
+schemaVersion=1.0
+exitCode
+findings
+findings[].category
+findings[].detail
+findings[].file
+findings[].fix
+findings[].ruleId
+findings[].severity
+findings[].summary
+schemaVersion
+summary
+summary.errors
+summary.info
+summary.warnings

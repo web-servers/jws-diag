@@ -1,5 +1,6 @@
 package org.jboss.jws.diag.diff.model;
 
+import org.jboss.jws.diag.common.SchemaVersions;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -16,8 +17,6 @@ import java.util.List;
 @JsonPropertyOrder({"schemaVersion", "referencePid", "referenceBase", "instanceCount", "comparisons"})
 public final class MultiDiffReport {
 
-    private static final String SCHEMA_VERSION = "1.0";
-
     private final int referencePid;
     private final Path referenceBase;
     private final int instanceCount;
@@ -32,7 +31,7 @@ public final class MultiDiffReport {
     }
 
     @JsonProperty("schemaVersion")
-    public String getSchemaVersion() { return SCHEMA_VERSION; }
+    public String getSchemaVersion() { return SchemaVersions.DIFF; }
 
     @JsonProperty("referencePid")
     public int getReferencePid() { return referencePid; }
