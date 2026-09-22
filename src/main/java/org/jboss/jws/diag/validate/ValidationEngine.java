@@ -55,7 +55,20 @@ public final class ValidationEngine {
             new PortAvailabilityCheckRule()
     );
 
+    /**
+     * Runs every rule and returns the findings, whether or not server.xml could be read.
+     * Used by {@code bundle}, which should still record what it can for a broken server.
+     */
     public List<Finding> validate(Path catalinaBase) {
+        return run(catalinaBase).getFindings();
+    }
+
+    /**
+     * Runs every rule and also reports whether server.xml could be read. When it could
+     * not, the findings come only from rules that do not need it, so they do not describe
+     * the installation and must not be reported as a validation result.
+     */
+    public ValidationRun run(Path catalinaBase) {
         RuleContext context = RuleContext.fromDisk(catalinaBase);
 
         List<Finding> findings = new ArrayList<>();
@@ -64,6 +77,6 @@ public final class ValidationEngine {
             findings.addAll(rule.evaluate(context));
         }
 
-        return findings;
+        return new ValidationRun(findings, context.getServerXmlProblem());
     }
 }

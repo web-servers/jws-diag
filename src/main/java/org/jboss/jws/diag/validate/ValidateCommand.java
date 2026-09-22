@@ -63,8 +63,13 @@ public class ValidateCommand implements Runnable {
             return ExitCodes.TOOL_FAILURE;
         }
 
-        ValidationEngine validationEngine = new ValidationEngine();
-        List<Finding> findings = validationEngine.validate(resolvedCatalinaBase);
+        ValidationRun run = new ValidationEngine().run(resolvedCatalinaBase);
+        if (!run.isComplete()) {
+            // No rule could be evaluated, so there is no result to report, clean or not.
+            System.err.println("[ERROR] Validation did not run: " + run.getServerXmlProblem());
+            return ExitCodes.TOOL_FAILURE;
+        }
+        List<Finding> findings = run.getFindings();
         int exitCode = ExitCodeCalculator.determineExitCode(findings);
 
         switch (outputFormat.getFormat()) {
@@ -101,7 +106,12 @@ public class ValidateCommand implements Runnable {
                 continue;
             }
             try {
-                List<Finding> findings = engine.validate(base);
+                ValidationRun run = engine.run(base);
+                if (!run.isComplete()) {
+                    System.err.println("[WARN] Skipping PID " + inst.getPid() + ": " + run.getServerXmlProblem());
+                    continue;
+                }
+                List<Finding> findings = run.getFindings();
                 results.add(new InstanceValidationResult(inst.getPid(), base, findings));
                 allFindings.addAll(findings);
             } catch (RuntimeException e) {

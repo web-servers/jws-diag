@@ -121,4 +121,29 @@ class ValidateAllCommandTest {
     private static TomcatInstance instance(int pid, Path base) {
         return new TomcatInstance(pid, base, base);
     }
+
+    @Test
+    void instanceWithMalformedServerXml_isSkippedNotReportedAsValidated() throws IOException {
+        Path valid = base("valid");
+        Path broken = Files.createDirectories(root.resolve("broken/conf")).getParent();
+        Files.writeString(broken.resolve("conf/server.xml"), "not xml", StandardCharsets.UTF_8);
+
+        int exitCode = command(List.of(instance(100, valid), instance(200, broken)),
+                "--all", "--format", "JSON").execute();
+
+        JsonNode json = new ObjectMapper().readTree(stdout.toString(StandardCharsets.UTF_8));
+        assertThat(json.get("instances")).hasSize(1);
+        assertThat(json.get("instances").get(0).get("pid").asInt()).isEqualTo(100);
+        assertThat(exitCode).isGreaterThanOrEqualTo(ExitCodes.WARNINGS).isNotEqualTo(ExitCodes.TOOL_FAILURE);
+    }
+
+    @Test
+    void everyInstanceMalformed_isToolFailure() throws IOException {
+        Path broken = Files.createDirectories(root.resolve("broken/conf")).getParent();
+        Files.writeString(broken.resolve("conf/server.xml"), "not xml", StandardCharsets.UTF_8);
+
+        int exitCode = command(List.of(instance(100, broken)), "--all", "--format", "JSON").execute();
+
+        assertThat(exitCode).isEqualTo(ExitCodes.TOOL_FAILURE);
+    }
 }
