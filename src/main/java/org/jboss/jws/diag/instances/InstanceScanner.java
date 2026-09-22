@@ -31,7 +31,8 @@ public final class InstanceScanner {
         this(DEFAULT_PROC);
     }
 
-    InstanceScanner(Path procRoot) {
+    /** Scans an alternative /proc root. Used by tests and by rules that read /proc themselves. */
+    public InstanceScanner(Path procRoot) {
         this.procRoot = procRoot;
     }
 
