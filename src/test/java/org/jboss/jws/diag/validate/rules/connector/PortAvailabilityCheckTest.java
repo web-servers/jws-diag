@@ -264,14 +264,16 @@ public class PortAvailabilityCheckTest {
         Files.write(pidDir.resolve("cmdline"), cmdline.getBytes(StandardCharsets.UTF_8));
     }
 
-    // Windows runners cannot create symbolic links without extra privileges.
+    // /proc/<pid>/fd entries are links to "socket:[inode]". Some platforms cannot create
+    // symbolic links at all, and Windows rejects ':' in a path, so probe with that exact
+    // kind of target. The rule itself never reaches this code where there is no /proc.
     private void assumeSymlinks() {
         try {
             Path probe = proc.resolve("symlink-probe");
-            Files.createSymbolicLink(probe, Path.of("target"));
+            Files.createSymbolicLink(probe, Path.of("socket:[1]"));
             Files.delete(probe);
-        } catch (IOException | UnsupportedOperationException e) {
-            assumeTrue(false, "symbolic links not available on this platform");
+        } catch (IOException | UnsupportedOperationException | java.nio.file.InvalidPathException e) {
+            assumeTrue(false, "socket-style symbolic links not available on this platform");
         }
     }
 }
