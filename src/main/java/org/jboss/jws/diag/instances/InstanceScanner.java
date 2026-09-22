@@ -31,7 +31,8 @@ public final class InstanceScanner {
         this(DEFAULT_PROC);
     }
 
-    InstanceScanner(Path procRoot) {
+    /** Scans an alternative /proc root. Used by tests and by rules that read /proc themselves. */
+    public InstanceScanner(Path procRoot) {
         this.procRoot = procRoot;
     }
 
@@ -56,6 +57,33 @@ public final class InstanceScanner {
         }
         results.sort((a, b) -> Integer.compare(a.getPid(), b.getPid()));
         return Collections.unmodifiableList(results);
+    }
+
+    /**
+     * The running instance whose CATALINA_BASE, or CATALINA_HOME when no base is set, is
+     * {@code catalinaBase}, or null if none is running. Paths are compared after resolving
+     * symbolic links, so {@code /opt/tomcat} and a link to it match.
+     */
+    public TomcatInstance findByCatalinaBase(Path catalinaBase) {
+        if (catalinaBase == null) {
+            return null;
+        }
+        Path wanted = canonical(catalinaBase);
+        for (TomcatInstance instance : scan()) {
+            Path base = instance.getCatalinaBase() != null ? instance.getCatalinaBase() : instance.getCatalinaHome();
+            if (base != null && canonical(base).equals(wanted)) {
+                return instance;
+            }
+        }
+        return null;
+    }
+
+    private static Path canonical(Path path) {
+        try {
+            return path.toRealPath();
+        } catch (IOException e) {
+            return path.toAbsolutePath().normalize();
+        }
     }
 
     private boolean isPidDir(Path path) {

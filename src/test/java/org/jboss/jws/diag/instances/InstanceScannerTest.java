@@ -190,4 +190,21 @@ class InstanceScannerTest {
     private void writeEnviron(String pid, String... entries) throws IOException {
         Files.write(proc.resolve(pid).resolve("environ"), cmdline(entries));
     }
+
+    @Test
+    void findByCatalinaBase_returnsTheMatchingInstance() throws IOException {
+        Path baseA = dir("base-a");
+        Path baseB = dir("base-b");
+        createProcess("1001", cmdline("/usr/bin/java", "-Dcatalina.base=" + baseA,
+                "org.apache.catalina.startup.Bootstrap", "start"));
+        createProcess("1002", cmdline("/usr/bin/java", "-Dcatalina.base=" + baseB,
+                "org.apache.catalina.startup.Bootstrap", "start"));
+
+        assertThat(new InstanceScanner(proc).findByCatalinaBase(baseB).getPid()).isEqualTo(1002);
+    }
+
+    @Test
+    void findByCatalinaBase_returnsNullWhenNotRunning() throws IOException {
+        assertThat(new InstanceScanner(proc).findByCatalinaBase(dir("idle"))).isNull();
+    }
 }
