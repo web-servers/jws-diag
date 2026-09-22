@@ -103,10 +103,11 @@ The `jws-diag validate` command uses the following exit codes:
 |    `0`    |    OK    | No `ERROR` or `WARN` findings. `INFO` findings do not affect the exit code.  |
 |    `1`    | Warnings | One or more `WARN` findings are present and no `ERROR` findings are present. |
 |    `2`    |  Errors  | One or more `ERROR` findings are present.                                    |
+|    `3`    | Failure  | Validation did not run: `CATALINA_BASE` unknown, or `server.xml` missing or unparseable. |
 
 When multiple severity levels are present, the exit code reflects the highest severity found. For example, if the validation result contains both warnings and errors, the command returns exit code `2`.
 
-These exit codes can be used by scripts and CI pipelines to determine whether validation completed without errors, produced warnings, or detected errors.
+These exit codes can be used by scripts and CI pipelines to determine whether validation completed without errors, produced warnings, or detected errors. Exit code `3` means no rule was evaluated, so it says nothing about the configuration and should be treated as a failure of the check itself.
 
 ## Validation Rules
 

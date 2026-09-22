@@ -15,18 +15,26 @@ public final class RuleContext {
     private final Document serverXml;
     private final Document tomcatUsersXml;
     private final String username;
+    private final String serverXmlProblem;
 
     public static RuleContext fromDisk(Path catalinaBase) {
         Document serverXml = null;
         Document tomcatUsersXml = null;
+        String serverXmlProblem = null;
 
+        Path serverXmlPath = catalinaBase.resolve("conf/server.xml");
         try {
-            serverXml = parseXml(catalinaBase.resolve("conf/server.xml"));
+            serverXml = parseXml(serverXmlPath);
+            if (serverXml == null) {
+                serverXmlProblem = "server.xml not found at " + serverXmlPath;
+            }
         } catch (SAXException e) {
             System.err.println("[ERROR] server.xml is malformed and could not be parsed: " + e.getMessage());
             System.err.println("Please check the file for XML syntax errors.");
+            serverXmlProblem = "server.xml is malformed and could not be parsed: " + e.getMessage();
         } catch (ParserConfigurationException | IOException e) {
             System.err.println("[ERROR] Could not read server.xml: " + e.getMessage());
+            serverXmlProblem = "could not read server.xml: " + e.getMessage();
         }
 
         try {
@@ -38,14 +46,21 @@ public final class RuleContext {
             System.err.println("[ERROR] Could not read tomcat-users.xml: " + e.getMessage());
         }
 
-        return new RuleContext(catalinaBase, serverXml, tomcatUsersXml, System.getProperty("user.name"));
+        return new RuleContext(catalinaBase, serverXml, tomcatUsersXml, System.getProperty("user.name"),
+                serverXmlProblem);
     }
 
     public RuleContext(Path catalinaBase, Document serverXml, Document tomcatUsersXml, String username) {
+        this(catalinaBase, serverXml, tomcatUsersXml, username, null);
+    }
+
+    private RuleContext(Path catalinaBase, Document serverXml, Document tomcatUsersXml, String username,
+                        String serverXmlProblem) {
         this.catalinaBase = catalinaBase;
         this.serverXml = serverXml;
         this.tomcatUsersXml = tomcatUsersXml;
         this.username = username;
+        this.serverXmlProblem = serverXmlProblem;
     }
 
     public Path getCatalinaBase() {
@@ -62,6 +77,14 @@ public final class RuleContext {
 
     public String getUsername() {
         return username;
+    }
+
+    /**
+     * Why server.xml could not be used, or null when it was read. Only set by
+     * {@link #fromDisk(Path)}; a context built directly from a parsed document has none.
+     */
+    String getServerXmlProblem() {
+        return serverXmlProblem;
     }
 
     private static Document parseXml(Path path) throws SAXException, IOException, ParserConfigurationException {

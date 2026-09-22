@@ -57,4 +57,39 @@ public class ValidateCommandTest {
 
         assertThat(exitCode).isIn(ExitCodes.OK, ExitCodes.WARNINGS, ExitCodes.ERRORS);
     }
+
+    // No rule can be evaluated without server.xml, so there is no result to report:
+    // exit 3 and nothing on stdout, rather than a result that looks clean or broken.
+
+    @Test
+    void malformedServerXml_isToolFailureWithNoOutput(@TempDir Path catalinaBase) throws IOException {
+        writeConfFile(catalinaBase, "server.xml", "not xml");
+
+        assertThat(executeCapturingStdout(catalinaBase, "JSON")).isEmpty();
+        assertThat(lastExitCode).isEqualTo(ExitCodes.TOOL_FAILURE);
+    }
+
+    @Test
+    void missingServerXml_isToolFailureWithNoOutput(@TempDir Path catalinaBase) throws IOException {
+        Files.createDirectories(catalinaBase.resolve("conf"));
+
+        assertThat(executeCapturingStdout(catalinaBase, "HUMAN")).isEmpty();
+        assertThat(lastExitCode).isEqualTo(ExitCodes.TOOL_FAILURE);
+    }
+
+    private int lastExitCode;
+
+    private String executeCapturingStdout(Path catalinaBase, String format) {
+        ValidateCommand command = new ValidateCommand();
+        new CommandLine(command).parseArgs("--catalina-base", catalinaBase.toString(), "--format", format);
+        java.io.PrintStream original = System.out;
+        java.io.ByteArrayOutputStream buffer = new java.io.ByteArrayOutputStream();
+        System.setOut(new java.io.PrintStream(buffer, true, StandardCharsets.UTF_8));
+        try {
+            lastExitCode = command.execute();
+        } finally {
+            System.setOut(original);
+        }
+        return buffer.toString(StandardCharsets.UTF_8);
+    }
 }
