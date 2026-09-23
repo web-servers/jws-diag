@@ -55,7 +55,7 @@ public class PortAvailabilityCheckRule implements Rule {
             return List.of();
         }
 
-        TomcatInstance self = runningInstanceFor(ctx.getCatalinaBase());
+        TomcatInstance self = new InstanceScanner(procRoot).findByCatalinaBase(ctx.getCatalinaBase());
         Set<String> ownInodes = self != null ? socketInodesOf(self.getPid()) : null;
 
         NodeList connectors = doc.getElementsByTagName("Connector");
@@ -121,28 +121,6 @@ public class PortAvailabilityCheckRule implements Rule {
             }
         }
         return connectorWildcard || ListeningSockets.sameAddress(literal, listener.address);
-    }
-
-    private TomcatInstance runningInstanceFor(Path catalinaBase) {
-        if (catalinaBase == null) {
-            return null;
-        }
-        Path wanted = normalize(catalinaBase);
-        for (TomcatInstance instance : new InstanceScanner(procRoot).scan()) {
-            Path base = instance.getCatalinaBase() != null ? instance.getCatalinaBase() : instance.getCatalinaHome();
-            if (base != null && normalize(base).equals(wanted)) {
-                return instance;
-            }
-        }
-        return null;
-    }
-
-    private static Path normalize(Path path) {
-        try {
-            return path.toRealPath();
-        } catch (IOException e) {
-            return path.toAbsolutePath().normalize();
-        }
     }
 
     // Socket inodes held by a process, from the "socket:[inode]" targets in /proc/<pid>/fd.

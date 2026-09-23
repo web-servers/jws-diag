@@ -91,7 +91,9 @@ org.jboss.jws.diag
 │   ├── ValidateCommand.java
 │   ├── ValidationEngine.java          # owns the hardcoded list of all Rule instances
 │   ├── Rule.java                      # interface: List<Finding> evaluate(RuleContext)
-│   ├── RuleContext.java               # catalinaBase + parsed server.xml + tomcat-users.xml + username
+│   ├── RuleContext.java               # catalinaBase + parsed server.xml + tomcat-users.xml,
+│   │                                  # plus why server.xml could not be read
+│   ├── ValidationRun.java             # findings + whether server.xml was usable
 │   ├── ExitCodeCalculator.java        # max severity to exit code
 │   ├── model/                         # Finding (ruleId, category, severity, summary, detail,
 │   │                                  # file, fix), InstanceValidationResult
@@ -169,7 +171,13 @@ public interface Rule {
     List<Finding> evaluate(RuleContext ctx);
 }
 ```
-Rules return `List.of()` for no findings. All check `ctx.getServerXml() == null` first.
+Rules return `List.of()` for no findings. Rules that read `server.xml` check `ctx.getServerXml() == null` first.
+
+Some rules need host state rather than configuration. Those read `/proc` and take the root as a
+constructor argument, so tests use a fixture tree instead of the machine running the build:
+SEC-001 reads the Tomcat process UID from `/proc/<pid>/status`, and CONN-006 reads listening
+sockets from `/proc/net/tcp`. Neither binds a socket or acts on the host. Where `/proc` is absent,
+such a rule reports nothing rather than guessing.
 
 Findings use the builder pattern:
 ```java
