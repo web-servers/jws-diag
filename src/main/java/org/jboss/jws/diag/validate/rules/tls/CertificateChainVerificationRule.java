@@ -5,13 +5,9 @@ import org.jboss.jws.diag.common.Severity;
 import org.jboss.jws.diag.validate.Rule;
 import org.jboss.jws.diag.validate.RuleContext;
 import org.jboss.jws.diag.validate.model.Finding;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.security.cert.Certificate;
@@ -24,50 +20,17 @@ public class CertificateChainVerificationRule implements Rule {
 
     @Override
     public List<Finding> evaluate(RuleContext ctx) {
-        Document doc = ctx.getServerXml();
-
-        if (doc == null) {
-            return List.of();
-        }
-
-        NodeList certificates = doc.getElementsByTagName("Certificate");
         List<Finding> findings = new ArrayList<>();
 
-        for (int i = 0; i < certificates.getLength(); i++) {
-            Node certNode = certificates.item(i);
-
-            Node keystoreFileAttr = certNode.getAttributes().getNamedItem("certificateKeystoreFile");
-            Node keystorePasswordAttr = certNode.getAttributes().getNamedItem("certificateKeystorePassword");
-            Node keystoreTypeAttr = certNode.getAttributes().getNamedItem("certificateKeystoreType");
-
-            if (keystoreFileAttr == null) {
+        for (KeystoreLocator.Keystore keystore : KeystoreLocator.locate(ctx)) {
+            if (!keystore.isResolved() || !Files.exists(keystore.path)) {
                 continue;
             }
-
-            String keystoreFile = keystoreFileAttr.getNodeValue();
-            String keystorePassword = keystorePasswordAttr != null
-                    ? keystorePasswordAttr.getNodeValue() : "";
-
-            String keystoreType;
-
-            if (keystoreTypeAttr != null) {
-                keystoreType = keystoreTypeAttr.getNodeValue().toUpperCase();
-            } else {
-                String lower = keystoreFile.toLowerCase();
-                keystoreType = (lower.endsWith(".p12") || lower.endsWith(".pfx")) ? "PKCS12" : "JKS";
-            }
-
-            Path keystorePath = ctx.getCatalinaBase().resolve(keystoreFile);
-
-            if (!Files.exists(keystorePath)) {
-                continue;
-            }
-
             try {
-                KeyStore keyStore = KeyStore.getInstance(keystoreType);
+                KeyStore keyStore = KeyStore.getInstance(keystore.type);
 
-                try (var inputStream = Files.newInputStream(keystorePath)) {
-                    keyStore.load(inputStream, keystorePassword.toCharArray());
+                try (var inputStream = Files.newInputStream(keystore.path)) {
+                    keyStore.load(inputStream, keystore.password.toCharArray());
                 }
 
                 Enumeration<String> aliases = keyStore.aliases();
@@ -87,9 +50,9 @@ public class CertificateChainVerificationRule implements Rule {
                                 .category("TLS")
                                 .severity(Severity.WARN)
                                 .summary("Certificate Chain Verification")
-                                .detail("Certificate for alias '" + alias + "' in " + keystoreFile
+                                .detail("Certificate for alias '" + alias + "' in " + keystore.declaredFile
                                         + " does not contain a certificate chain.")
-                                .file(keystoreFile)
+                                .file(keystore.declaredFile)
                                 .fix("Bundle the required intermediate CA certificate(s) "
                                         + "into the keystore alongside the end-entity certificate.")
                                 .build());
@@ -128,9 +91,9 @@ public class CertificateChainVerificationRule implements Rule {
                                 .severity(Severity.WARN)
                                 .summary("Certificate Chain Verification")
                                 .detail("Certificate chain for alias '" + alias
-                                        + "' in " + keystoreFile
+                                        + "' in " + keystore.declaredFile
                                         + " is incomplete or contains a missing intermediate certificate.")
-                                .file(keystoreFile)
+                                .file(keystore.declaredFile)
                                 .fix("Bundle the required intermediate CA certificate(s) "
                                         + "into the keystore alongside the end-entity certificate.")
                                 .build());

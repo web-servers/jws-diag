@@ -120,4 +120,60 @@ public class CertificateExpiryTest {
 
         assertThat(findings).isEmpty();
     }
+
+    // Regressions for #69: the keystore Tomcat would actually use.
+
+    @Test
+    void shouldUseTomcatDefaultPasswordWhenNoneIsConfigured() throws Exception {
+        Path catalinaBase = Path.of("src/test/resources/fixtures/tls/keystores");
+        Document serverXml = parseFixture("/fixtures/tls/server-cert-expired-no-password.xml");
+
+        List<Finding> findings = rule.evaluate(new RuleContext(catalinaBase, serverXml, null, "testuser"));
+
+        // The keystore opens with "changeit", so the expiry is reported rather than a
+        // "password was incorrect" failure.
+        assertThat(findings).hasSize(1);
+        assertThat(findings.get(0).getDetail()).contains("expired on");
+    }
+
+    @Test
+    void shouldReadKeystoreConfiguredOnTheConnector() throws Exception {
+        Path catalinaBase = Path.of("src/test/resources/fixtures/tls/keystores");
+        Document serverXml = parseFixture("/fixtures/tls/server-cert-expired-connector-keystore.xml");
+
+        List<Finding> findings = rule.evaluate(new RuleContext(catalinaBase, serverXml, null, "testuser"));
+
+        assertThat(findings).hasSize(1);
+        assertThat(findings.get(0).getRuleId()).isEqualTo(RuleId.TLS_002);
+        assertThat(findings.get(0).getDetail()).contains("expired on");
+    }
+
+    @Test
+    void shouldReadConnectorKeystoreAlongsideAnSslHostConfigThatNamesNone() throws Exception {
+        Path catalinaBase = Path.of("src/test/resources/fixtures/tls/keystores");
+        Document serverXml = parseFixture(
+                "/fixtures/tls/server-cert-expired-legacy-with-empty-sslhostconfig.xml");
+
+        List<Finding> findings = rule.evaluate(new RuleContext(catalinaBase, serverXml, null, "testuser"));
+
+        assertThat(findings).hasSize(1);
+        assertThat(findings.get(0).getRuleId()).isEqualTo(RuleId.TLS_002);
+        assertThat(findings.get(0).getDetail()).contains("expired on");
+    }
+
+    @Test
+    void shouldExpandCatalinaBaseInTheKeystorePath() throws Exception {
+        Path catalinaBase = Path.of("src/test/resources/fixtures/tls/keystores");
+        Document serverXml = parseFixture("/fixtures/tls/server-cert-valid-catalina-base.xml");
+
+        assertThat(rule.evaluate(new RuleContext(catalinaBase, serverXml, null, "testuser"))).isEmpty();
+    }
+
+    @Test
+    void shouldSkipAPathWithAnUnresolvablePlaceholder() throws Exception {
+        Path catalinaBase = Path.of("src/test/resources/fixtures/tls/keystores");
+        Document serverXml = parseFixture("/fixtures/tls/server-cert-unresolvable-placeholder.xml");
+
+        assertThat(rule.evaluate(new RuleContext(catalinaBase, serverXml, null, "testuser"))).isEmpty();
+    }
 }
