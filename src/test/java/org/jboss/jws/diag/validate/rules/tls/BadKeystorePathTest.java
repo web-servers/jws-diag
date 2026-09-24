@@ -55,4 +55,33 @@ public class BadKeystorePathTest {
 
         assertThat(findings).isEmpty();
     }
+
+    // Regressions for #69.
+
+    @Test
+    void shouldPassWhenCatalinaBasePlaceholderResolvesToAnExistingFile() throws Exception {
+        Path catalinaBase = Path.of("src/test/resources/fixtures/tls/keystores");
+        Document serverXml = parseFixture("/fixtures/tls/server-cert-valid-catalina-base.xml");
+
+        assertThat(rule.evaluate(new RuleContext(catalinaBase, serverXml, null, "testuser"))).isEmpty();
+    }
+
+    @Test
+    void shouldSkipAPathWithAnUnresolvablePlaceholder() throws Exception {
+        Path catalinaBase = Path.of("src/test/resources/fixtures/tls/keystores");
+        Document serverXml = parseFixture("/fixtures/tls/server-cert-unresolvable-placeholder.xml");
+
+        assertThat(rule.evaluate(new RuleContext(catalinaBase, serverXml, null, "testuser"))).isEmpty();
+    }
+
+    @Test
+    void shouldFlagAMissingKeystoreConfiguredOnTheConnector() throws Exception {
+        Path catalinaBase = Path.of("src/test/resources/fixtures/tls/keystores");
+        Document serverXml = parseFixture("/fixtures/tls/server-cert-missing-connector-keystore.xml");
+
+        List<Finding> findings = rule.evaluate(new RuleContext(catalinaBase, serverXml, null, "testuser"));
+
+        assertThat(findings).hasSize(1);
+        assertThat(findings.get(0).getDetail()).contains("no-such-keystore.jks");
+    }
 }
